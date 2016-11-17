@@ -5,12 +5,13 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use Goutte, File;
-
+use App\Helpers\simple_html_dom;
 
 class CrawlerController extends Controller
 {
    
     public function index(Request $request){
+
     	$this->adayroi($request);
     }
     public function lazada(Request $request){
@@ -51,8 +52,8 @@ class CrawlerController extends Controller
         set_time_limit(10000);
         for($page = 1; $page <= 1; $page++){ 
              $crawler = Goutte::request('GET', 'https://www.adayroi.com/tui-vi-m58?p='.$page.'&featured=isPromotion');             
-             var_dump($crawler);die;
              $crawler->filter('.col-lg-3.col-xs-4')->each(function ($node){
+                if($node->filter('.out-of-stock')->count() == 0){
                 $title = $content = $image_url = $link = "";
                     if($node->filter('img.imglist')->count() > 0){
                      $image_url = $node->filter('img.imglist')->attr('data-src');
@@ -75,6 +76,7 @@ class CrawlerController extends Controller
                   var_dump($sale_percent);
                 
                     echo "<hr>";                
+                }
              });
               
         }
@@ -83,34 +85,65 @@ class CrawlerController extends Controller
         
         set_time_limit(10000);
         for($page = 1; $page <= 1; $page++){ 
-             $crawler = Goutte::request('GET', 'https://tiki.vn/laptop/c2742?order=discount_percent%2Cdesc&page='.$page);   
-             var_dump('https://tiki.vn/laptop/c2742?order=discount_percent%2Cdesc&page='.$page);
-             var_dump($crawler);die;
-             $crawler->filter('div.product-item')->each(function ($node){
-                die('123');
+             //$crawler = Goutte::request('GET', 'https://tiki.vn/laptop/c2742?order=discount_percent%2Cdesc&page='.$page);   
+             //var_dump('https://tiki.vn/laptop/c2742?order=discount_percent%2Cdesc&page='.$page);
+             $url = 'https://tiki.vn/laptop/c2742?order=discount_percent%2Cdesc&page='.$page; 
+             $chs = curl_init();
+
+            // set URL and other appropriate options
+            curl_setopt($chs, CURLOPT_URL, $url);
+            curl_setopt($chs, CURLOPT_RETURNTRANSFER, 1); 
+            curl_setopt($chs, CURLOPT_HEADER, 0);
+
+            // grab URL and pass it to the browser
+            $result = curl_exec($chs);
+
+            // close cURL resource, and free up system resources
+            curl_close($chs);
+         // Create a DOM object
+            $crawler = new simple_html_dom();
+            // Load HTML from a string
+            $crawler->load($result);
+            foreach($crawler->find('div.product-item') as $node){          
+               
                 $title = $content = $image_url = $link = "";
-                    if($node->filter('img.imglist')->count() > 0){
-                     $image_url = $node->filter('img.imglist')->attr('data-src');
+                $count_img = count($node->find('span.image img'));
+                
+                    if($count_img == 2){
+                     $image_url = $node->find('span.image img',1)->src;
+                    }
+                    if($count_img == 1){
+                     $image_url = $node->find('span.image img',0)->src;
+                    }  
+                    if($count_img == 3){
+                     $image_url = $node->find('span.image img',2)->src;
                     }   
                     var_dump($image_url);
                     echo "<br>";
-                    $link = $node->filter('a')->attr('href');
+                    
+                    $link = $node->find('a', 0)->href;
+                    $link = strstr($link, '?', true);
                     var_dump($link);
                     echo "<br>";
-                     $title = $node->filter('title.title')->text();
+                    
+                     $title = trim($node->find('span.title', 0)->innertext);
                     var_dump($title);
                     echo "<br>";
-                 $price = $node->filter('.price-sale')->text();
+                 
+                 $price_tmp = $node->find('.price-sale', 0)->innertext;
+                 $tmpArr = explode('<span', $price_tmp);
+                 $price = $tmpArr[0];
                  var_dump($price);
                 echo "<br>";
-                  $price_old = $node->filter('.sale-tag')->text();
+                  $price_old = $node->find('.price-regular', 0)->innertext;
                   var_dump($price_old);
                 echo "<br>";
-                  $sale_percent = $node->filter('.price-regular')->text();
-                  var_dump($sale_percent);
-                
-                    echo "<hr>";                
-             });
+                  $sale_percent = $node->find('.sale-tag', 0)->innertext;
+                  var_dump($sale_percent);               
+
+                    echo "<hr>";
+
+            };
               
         }
     }
