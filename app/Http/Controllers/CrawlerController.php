@@ -69,14 +69,17 @@ class CrawlerController extends Controller
                  $price = $node->filter('.amount-1')->text();
                  var_dump($price);
                 echo "<br>";
-                  $price_old = $node->filter('.amount-2')->text();
-                  var_dump($price_old);
-                echo "<br>";
-                  $sale_percent = $node->filter('.sale-off')->text();
-                  var_dump($sale_percent);
-                
-                    echo "<hr>";                
+                if($node->filter('.amount-2')->count() > 0){
+                    $price_old = $node->filter('.amount-2')->text();
+                    var_dump($price_old);
+                    echo "<br>";
                 }
+                if($node->filter('.sale-off')->count() > 0){
+                    $sale_percent = $node->filter('.sale-off')->text();
+                    var_dump($sale_percent);
+                }
+                    echo "<hr>";                
+                
              });
               
         }
