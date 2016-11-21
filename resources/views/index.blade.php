@@ -104,11 +104,11 @@
 						_token : $('input[name=_token]').val()
 					},
 					beforeSend : function(){
-						obj.html('<i class="fa fa-spin fa-spinner"></i>');
+						obj.html('<i class="fa fa-spin fa-spinner"></i>').attr('disabled', 'disabled');
 					},
 					success : function(data){
 						$('div#data').html(data).show();
-						obj.html('Tìm');
+						obj.html('Tìm').removeAttr('disabled');
 					}
 				})
 			}
