@@ -79,7 +79,7 @@ class CrawlerController extends Controller
                     var_dump($sale_percent);
                 }
                     echo "<hr>";                
-                
+               } 
              });
               
         }
