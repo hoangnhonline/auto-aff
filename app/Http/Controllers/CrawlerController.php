@@ -101,9 +101,35 @@ class CrawlerController extends Controller
             $dataArr = $this->crawlerLazada($url);
 
         }
-         return view('crawler', compact('dataArr', 'url')); 
+        return view('crawler', compact('dataArr', 'url')); 
     }
+    public function crawlerLazada($url){
+         $crawler = Goutte::request('GET', $url); 
+           //var_dump('http://www.lazada.vn/ao-khoac-nu/?dir=desc&page='.$page.'&sort=discountspecial');die;
+   
+            
+        $dataArr['title'] = "";
+        $dataArr['img'] = "";
+        $dataArr['price'] = "";
+        $dataArr['price_old'] = "";
+        
+        if( $crawler->filter('h1#prod_title')->count() > 0 ){
+            $dataArr['title'] = trim($crawler->filter('h1#prod_title')->text());
+        }
+        
+        if( $crawler->filter('meta[property="og:image"]')->count() > 0 ){
+           $dataArr['img'] = $crawler->filter('meta[property="og:image"]')->attr('content');
+        }
+        if( $crawler->filter('#special_price_box')->count() > 0 ){
+            $dataArr['price'] = $crawler->filter('#special_price_box')->text();
+        }
+        if( $crawler->filter('#price_box')->count() > 0 ){
+           $dataArr['price_old'] = $crawler->filter('#price_box')->text();
+        }
 
+        return $dataArr;            
+         
+    }
     public function crawlerTiki($url){
         set_time_limit(10000);    
         $url = $url; 
