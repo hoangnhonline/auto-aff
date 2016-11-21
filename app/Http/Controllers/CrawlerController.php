@@ -11,8 +11,7 @@ class CrawlerController extends Controller
 {
    
     public function index(Request $request){
-
-    	$this->adayroi($request);
+        return view('index');    	
     }
     public function lazada(Request $request){
         set_time_limit(10000);
@@ -83,6 +82,69 @@ class CrawlerController extends Controller
              });
               
         }
+    }
+    public function crawler(Request $request){
+
+        $url = $request->url;        
+        $site = $this->checkSite($url);
+
+        if($site == "tiki"){
+
+            $dataArr = $this->crawlerTiki($url);
+
+        }elseif($site == "adayroi"){
+
+            $dataArr = $this->crawlerAdayroi($url);
+
+        }else{
+
+            $dataArr = $this->crawlerLazada($url);
+
+        }
+         return view('crawler', compact('dataArr', 'url')); 
+    }
+
+    public function crawlerTiki($url){
+        set_time_limit(10000);    
+        $url = $url; 
+        $chs = curl_init();            
+        curl_setopt($chs, CURLOPT_URL, $url);
+        curl_setopt($chs, CURLOPT_RETURNTRANSFER, 1); 
+        curl_setopt($chs, CURLOPT_HEADER, 0);
+        $result = curl_exec($chs);
+        curl_close($chs);
+        // Create a DOM object
+        $crawler = new simple_html_dom();
+        // Load HTML from a string
+        $crawler->load($result);
+        $dataArr['title'] = "";
+        $dataArr['img'] = "";
+        $dataArr['price'] = "";
+        $dataArr['price_old'] = "";
+        
+        if($crawler->find('h1.item-name', 0)){
+            $dataArr['title'] = trim($crawler->find('h1.item-name', 0)->innertext);
+        }
+        if($crawler->find('meta[property="og:image"]', 0)){
+            $dataArr['img'] = $crawler->find('meta[property="og:image"]', 0)->content;
+        }
+        if($crawler->find('#span-price', 0)){
+            $dataArr['price'] = $crawler->find('#span-price', 0)->innertext;    
+        }
+        if($crawler->find('.old-price-item span', 1)){
+            $dataArr['price_old'] = $crawler->find('.old-price-item span', 1)->innertext;    
+        }
+        return $dataArr;
+    }
+    public function checkSite($url){
+        if( strpos($url, 'tiki.vn') > 0 ){
+            $site = "tiki";
+        }elseif(strpos($url, 'adayroi') > 0){
+            $site = "adayroi";
+        }else{
+            $site = "lazada";
+        }
+        return $site;
     }
     public function tiki(Request $request){
         

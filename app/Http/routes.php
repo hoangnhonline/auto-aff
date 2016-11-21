@@ -10,6 +10,7 @@
 | and give it the controller to call when that URI is requested.
 |
 */
+Route::post('/crawler', ['uses' => 'CrawlerController@crawler', 'as' => 'crawler']);
 Route::get('/', ['uses' => 'CrawlerController@index']);
 
 // Authentication routes...
