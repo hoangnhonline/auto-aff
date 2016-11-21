@@ -96,6 +96,11 @@ class CrawlerController extends Controller
 
             $dataArr = $this->crawlerAdayroi($url);
 
+        }
+        elseif($site == "sendo"){
+
+            $dataArr = $this->crawlerSendo($url);
+
         }else{
 
             $dataArr = $this->crawlerLazada($url);
@@ -130,6 +135,57 @@ class CrawlerController extends Controller
         return $dataArr;            
          
     }
+    public function crawlerAdayroi($url){
+        $crawler = Goutte::request('GET', $url);
+            
+        $dataArr['title'] = "";
+        $dataArr['img'] = "";
+        $dataArr['price'] = "";
+        $dataArr['price_old'] = "";
+        
+        if( $crawler->filter('h1.item-title')->count() > 0 ){
+            $dataArr['title'] = trim($crawler->filter('h1.item-title')->text());
+        }
+        
+        if( $crawler->filter('meta[property="og:image"]')->count() > 0 ){
+           $dataArr['img'] = $crawler->filter('meta[property="og:image"]')->attr('content');
+        }
+        if( $crawler->filter('div.item-price')->count() > 0 ){
+            $dataArr['price'] = $crawler->filter('div.item-price')->text();
+        }
+        if( $crawler->filter('div.price span.original')->count() > 0 ){
+           $dataArr['price_old'] = $crawler->filter('div.price span.original')->text();
+        }
+
+        return $dataArr;            
+         
+    }
+    public function crawlerSendo($url){
+        $crawler = Goutte::request('GET', $url);
+            
+        $dataArr['title'] = "";
+        $dataArr['img'] = "";
+        $dataArr['price'] = "";
+        $dataArr['price_old'] = "";
+        
+        if( $crawler->filter('#lightbox_detail h1 strong.fn')->count() > 0 ){
+            $dataArr['title'] = trim($crawler->filter('#lightbox_detail h1 strong.fn')->text());
+        }
+        
+        if( $crawler->filter('meta[property="og:image"]')->count() > 0 ){
+           $dataArr['img'] = $crawler->filter('meta[property="og:image"]')->attr('content');
+        }
+        if( $crawler->filter('#lightbox_detail .box-price div.cur-price span')->first()->count() > 0 ){
+            $dataArr['price'] = number_format($crawler->filter('#lightbox_detail .box-price div.cur-price span')->first()->text());
+        }
+        if( $crawler->filter('#lightbox_detail .old-price')->count() > 0 ){
+           $dataArr['price_old'] = $crawler->filter('#lightbox_detail .old-price')->text();
+        }
+
+        return $dataArr;            
+         
+    }
+
     public function crawlerTiki($url){
         set_time_limit(10000);    
         $url = $url; 
@@ -167,6 +223,8 @@ class CrawlerController extends Controller
             $site = "tiki";
         }elseif(strpos($url, 'adayroi') > 0){
             $site = "adayroi";
+        }elseif(strpos($url, 'sendo') > 0){
+            $site = "sendo";
         }else{
             $site = "lazada";
         }
