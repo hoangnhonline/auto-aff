@@ -40,8 +40,12 @@ class ProductController extends Controller
 
         
         $arrSearch['name'] = $name = isset($request->name) && trim($request->name) != '' ? trim($request->name) : '';
+        $type = $request->type ? $request->type : 1;
         
+        $loaiSpArr = LoaiSp::where('type', $type)->orderBy('display_order')->get();  
+
         $query = SanPham::where('san_pham.status', $status);
+        $query->where('san_pham.type', $type);
         if( $is_hot ){
             $query->where('san_pham.is_hot', $is_hot);
         }
@@ -66,9 +70,7 @@ class ProductController extends Controller
         $items = $query->select(['sp_hinh.image_url','san_pham.*','san_pham.id as sp_id', 'full_name' , 'san_pham.created_at as time_created', 'users.full_name', 'loai_sp.name as ten_loai', 'cate.name as ten_cate', 'thumbnail_url', 'aff_price', 'aff_price_old'])
         ->paginate(50);   
         
-        $type = $request->type ? $request->type : 1;
         
-        $loaiSpArr = LoaiSp::where('type', $type)->orderBy('display_order')->get();  
         
         if( $loai_id ){
             $cateArr = Cate::where('loai_id', $loai_id)->orderBy('display_order', 'desc')->get();
@@ -227,30 +229,14 @@ class ProductController extends Controller
     {
         $loai_id = $request->loai_id ? $request->loai_id : null;
         $cate_id = $request->cate_id ? $request->cate_id : null;
-        $cateArr = $loaiThuocTinhArr = (object) [];
-        $thuocTinhArr = [];
-        $loaiSpArr = LoaiSp::all();
+        $cateArr = (object) [];
         
-        if( $loai_id ){
-            
+        $loaiSpArr = LoaiSp::where('type', 3)->get();
+        
+        if( $loai_id ){            
             $cateArr = Cate::where('loai_id', $loai_id)->select('id', 'name')->orderBy('display_order', 'desc')->get();
-            
-            $loaiThuocTinhArr = LoaiThuocTinh::where('loai_id', $loai_id)->orderBy('display_order')->get();
-
-            if( $loaiThuocTinhArr->count() > 0){
-                foreach ($loaiThuocTinhArr as $value) {
-
-                    $thuocTinhArr[$value->id]['id'] = $value->id;
-                    $thuocTinhArr[$value->id]['name'] = $value->name;
-
-                    $thuocTinhArr[$value->id]['child'] = ThuocTinh::where('loai_thuoc_tinh_id', $value->id)->select('id', 'name')->orderBy('display_order')->get()->toArray();
-                }
-                
-            }
-        }
-        $colorArr = Color::all();
-        $mucDichArr = [];
-        return view('backend.product.create', compact('loaiSpArr', 'cateArr', 'colorArr', 'loai_id', 'thuocTinhArr', 'cate_id', 'mucDichArr'));
+        }                
+        return view('backend.product.create', compact('loaiSpArr', 'cateArr', 'loai_id', 'cate_id'));
     }
 
     /**
@@ -266,79 +252,34 @@ class ProductController extends Controller
         $this->validate($request,[
             'name' => 'required',
             'slug' => 'required' ,
-            'price' => 'required|numeric',
-            'so_luong_ton' => 'required|numeric',
-            'can_nang' => 'required|numeric',
-            'chieu_dai' => 'required|numeric',
-            'chieu_rong' => 'required|numeric',
-            'chieu_cao' => 'required|numeric',
+            'price' => 'required|numeric'           
         ],
         [
             'name.required' => 'Bạn chưa nhập tên sản phẩm',
             'slug.required' => 'Bạn chưa nhập slug',
             'price.numeric' => 'Vui lòng nhập giá hợp lệ',
-            'price.required' => 'Bạn chưa nhập giá',
-            'so_luong_ton.required' => 'Bạn chưa nhập số lượng tồn',
-            'so_luong_ton.numeric' => 'Vui lòng nhập số lượng tồn hợp lệ',
-            'can_nang.required' => 'Bạn chưa nhập cân nặng',
-            'can_nang.numeric' => 'Vui lòng nhập cân nặng hợp lệ',
-            'chieu_dai.required' => 'Bạn chưa nhập chiều dài',
-            'chieu_dai.numeric' => 'Vui lòng nhập chiều dài hợp lệ',
-            'chieu_rong.required' => 'Bạn chưa nhập chiều rộng',
-            'chieu_rong.numeric' => 'Vui lòng nhập chiều rộng hợp lệ',
-            'chieu_cao.required' => 'Bạn chưa nhập chiều cao',
-            'chieu_cao.numeric' => 'Vui lòng nhập chiều cao hợp lệ',
-        ]);
-
-        $dataArr['is_primary'] = isset($dataArr['is_primary']) ? 1 : 0;
+            'price.required' => 'Bạn chưa nhập giá'           
+        ]);       
         $dataArr['is_hot'] = isset($dataArr['is_hot']) ? 1 : 0;
         $dataArr['is_sale'] = isset($dataArr['is_sale']) ? 1 : 0;        
         
         $dataArr['alias'] = Helper::stripUnicode($dataArr['name']);
         $dataArr['slug'] = str_replace(".", "-", $dataArr['slug']);
         $dataArr['slug'] = str_replace("(", "-", $dataArr['slug']);
-        $dataArr['slug'] = str_replace(")", "", $dataArr['slug']);
-        $dataArr['alias_extend'] = Helper::stripUnicode($dataArr['name_extend']);
-
-        $dataArr['sp_phukien'] = rtrim( $dataArr['str_sp_phukien'], ',');
-        $dataArr['sp_sosanh'] = rtrim( $dataArr['str_sp_sosanh'], ',');
-        $dataArr['sp_tuongtu'] = rtrim( $dataArr['str_sp_tuongtu'], ',');
+        $dataArr['slug'] = str_replace(")", "", $dataArr['slug']);       
         
         $dataArr['status'] = 1;
+        $dataArr['type'] = 3;
 
         $dataArr['created_user'] = Auth::user()->id;
 
         $dataArr['updated_user'] = Auth::user()->id;
 
-        if($dataArr['image_pro'] && $dataArr['pro_name']){
-            
-            $tmp = explode('/', $dataArr['image_pro']);
-
-            if(!is_dir('uploads/'.date('Y/m/d'))){
-                mkdir('uploads/'.date('Y/m/d'), 0777, true);
-            }
-
-            $destionation = date('Y/m/d'). '/'. end($tmp);
-            
-            File::move(config('icho.upload_path').$dataArr['image_pro'], config('icho.upload_path').$destionation);
-            
-            $dataArr['image_pro'] = $destionation;
-        }  
+        
 
         $rs = SanPham::create($dataArr);
 
-        $sp_id = $rs->id;
-
-        //muc_dich
-        $mucDichArr = $request->muc_dich;
-        SpMucDich::where('sp_id', $sp_id)->delete();
-        if(!empty($mucDichArr)){
-            foreach ($mucDichArr as $muc_dich) {
-                SpMucDich::create(['sp_id' => $sp_id, 'muc_dich' => $muc_dich]);
-            }
-        }
-
-        $this->storeThuocTinh( $sp_id, $dataArr);
+        $sp_id = $rs->id;       
 
         $this->storeImage( $sp_id, $dataArr);
         $this->storeMeta($sp_id, 0, $dataArr);
@@ -387,7 +328,7 @@ class ProductController extends Controller
         {
             foreach ($hinhXoaArr as $image_id_xoa) {
                 $model = SpHinh::find($image_id_xoa);
-                $urlXoa = config('icho.upload_path')."/".$model->image_url;
+                $urlXoa = config('aff.upload_path')."/".$model->image_url;
                 if(is_file($urlXoa)){
                     unlink($urlXoa);
                 }
@@ -415,7 +356,7 @@ class ProductController extends Controller
 
                         $destionation = date('Y/m/d'). '/'. end($tmp);
                         
-                        File::move(config('icho.upload_path').$image_url, config('icho.upload_path').$destionation);
+                        File::move(config('aff.upload_path').$image_url, config('aff.upload_path').$destionation);
 
                         $imageArr['name'][] = $destionation;
 
@@ -423,6 +364,7 @@ class ProductController extends Controller
                     }
                 }
             }
+
             if( !empty($imageArr['name']) ){
                 foreach ($imageArr['name'] as $key => $name) {
                     $rs = SpHinh::create(['sp_id' => $id, 'image_url' => $name, 'display_order' => 1]);                
@@ -672,7 +614,7 @@ class ProductController extends Controller
 
             $destionation = date('Y/m/d'). '/'. end($tmp);
             
-            File::move(config('icho.upload_path').$dataArr['image_pro'], config('icho.upload_path').$destionation);
+            File::move(config('aff.upload_path').$dataArr['image_pro'], config('aff.upload_path').$destionation);
             
             $dataArr['image_pro'] = $destionation;
         }  

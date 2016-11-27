@@ -43,7 +43,7 @@ class CrawlerController extends Controller
     public function lazada($url, $loai_id, $cate_id, $type){
         
         set_time_limit(10000);
-          $arr = ['loai_id' => $loai_id, 'cate_id' => $cate_id, 'type' => $type];
+        $arr = ['loai_id' => $loai_id, 'cate_id' => $cate_id, 'type' => $type];
         for($page = 1; $page <= 1; $page++){ 
                 
           

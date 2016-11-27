@@ -204,7 +204,7 @@ class Helper
 
     public static function showImage($image_url){
 
-        return strpos($image_url, 'http') === false ? config('nghien.upload_url').$image_url : $image_url;        
+        return strpos($image_url, 'http') === false ? config('aff.upload_url').$image_url : $image_url;        
 
     }
     public static function seo(){
@@ -335,29 +335,7 @@ class Helper
          $page = curl_exec($ch);
          curl_close($ch);
          return $page;
-    }
-    public static function getPhotoGoogle($link){
-        $get = self::curl($link);
-        $data = explode('url\u003d', $get);
-        unset($data[0]);
-	$linkDownload = [];
-        foreach($data as $d){            
-            if(strpos($d, 'video%2Fmp4')){
-                $tmpUrl = urldecode($d);
-                $tmpArr = explode("\u0026itag", $tmpUrl);
-                if(strpos($tmpArr[0], 'm37')){
-                    $linkDownload['1080p'] = $tmpArr[0];
-           
-                }elseif(strpos($tmpArr[0], 'm22')){
-                    $linkDownload['720p'] = $tmpArr[0];
-            
-                }elseif(strpos($tmpArr[0], 'm18')){
-                    $linkDownload['360p'] = $tmpArr[0];
-                }
-            }
-        }       
-        return $linkDownload;
-    }
+    }    
 
     public static function uploadPhoto($file, $base_folder = '', $date_dir=false){
     
@@ -369,8 +347,8 @@ class Helper
 
         $basePath = $date_dir == true ? $basePath .= date('Y/m/d'). '/'  : $basePath = $basePath;        
         
-        $desPath = config('nghien.upload_path'). $basePath;
-
+        $desPath = config('aff.upload_path'). $basePath;
+        
         //set name for file
         $fileName = $file->getClientOriginalName();
         
@@ -393,7 +371,7 @@ class Helper
             $return['image_name'] = $newFileName;
             $return['image_path'] = $imagePath;
         }
-
+        
         return $return;
     }
 

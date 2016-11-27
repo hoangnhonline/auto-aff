@@ -105,8 +105,8 @@ class OrderController extends Controller
                     function($message) use ($customer, $method_id) {
                         $message->subject('Cảm ơn bạn đã đặt hàng tại Icho.vn');
                         $message->to($customer->email);
-                        $message->from('icho.vn@gmail.com', 'icho.vn');
-                        $message->sender('icho.vn@gmail.com', 'icho.vn');
+                        $message->from('aff.vn@gmail.com', 'aff.vn');
+                        $message->sender('aff.vn@gmail.com', 'aff.vn');
                 });
                 break;
             case "3":
@@ -115,8 +115,8 @@ class OrderController extends Controller
                     function($message) use ($customer) {
                         $message->subject('Cảm ơn bạn đã đặt hàng tại Icho.vn');
                         $message->to($customer->email);
-                        $message->from('icho.vn@gmail.com', 'icho.vn');
-                        $message->sender('icho.vn@gmail.com', 'icho.vn');
+                        $message->from('aff.vn@gmail.com', 'aff.vn');
+                        $message->sender('aff.vn@gmail.com', 'aff.vn');
                 });*/
                 break;
             case "3":
@@ -138,8 +138,8 @@ class OrderController extends Controller
         //     function($message) use ($email) {
         //         $message->subject('Đơn đặt hàng tại Icho.vn');
         //         $message->to($email);
-        //         $message->from('icho.vn@gmail.com', 'icho.vn');
-        //         $message->sender('icho.vn@gmail.com', 'icho.vn');
+        //         $message->from('aff.vn@gmail.com', 'aff.vn');
+        //         $message->sender('aff.vn@gmail.com', 'aff.vn');
         // });
         return 'success';
     }

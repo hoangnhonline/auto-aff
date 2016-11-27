@@ -356,9 +356,9 @@ class CartController extends Controller
 
         $email = isset($vangLaiArr['email']) ? $vangLaiArr['email'] :  $customer->email;
         if($email != ''){
-            $emailArr = array_merge([$email], ['tundq.ipl@gmail.com', 'tundq@icare.center', 'hiepvv.ipl@gmail.com', 'lamhuong77@gmail.com', 'chamsoc@icho.vn', 'hoangnhonline@gmail.com']);
+            $emailArr = array_merge([$email], ['tundq.ipl@gmail.com', 'tundq@icare.center', 'hiepvv.ipl@gmail.com', 'lamhuong77@gmail.com', 'chamsoc@aff.vn', 'hoangnhonline@gmail.com']);
         }else{
-            $emailArr = ['tundq.ipl@gmail.com', 'tundq@icare.center', 'hiepvv.ipl@gmail.com', 'lamhuong77@gmail.com', 'chamsoc@icho.vn', 'hoangnhonline@gmail.com'];
+            $emailArr = ['tundq.ipl@gmail.com', 'tundq@icare.center', 'hiepvv.ipl@gmail.com', 'lamhuong77@gmail.com', 'chamsoc@aff.vn', 'hoangnhonline@gmail.com'];
         }
         // send email
         $order_id =str_pad($order_id, 6, "0", STR_PAD_LEFT);
@@ -378,8 +378,8 @@ class CartController extends Controller
                 function($message) use ($emailArr, $order_id) {
                     $message->subject('Xác nhận đơn hàng hàng #'.$order_id);
                     $message->to($emailArr);
-                    $message->from('icho.vn@gmail.com', 'icho.vn');
-                    $message->sender('icho.vn@gmail.com', 'icho.vn');
+                    $message->from('aff.vn@gmail.com', 'aff.vn');
+                    $message->sender('aff.vn@gmail.com', 'aff.vn');
             });
         }
         

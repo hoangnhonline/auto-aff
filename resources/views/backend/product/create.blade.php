@@ -347,61 +347,8 @@ $(document).on('click', 'button.btnSaveSearch',function(){
   }
 
 });
-    $(document).ready(function(){
-      $('#btnUploadPro').click(function(){        
-        $('#file-pro').click();
-      });      
-      var files = "";
-      $('#file-pro').change(function(e){
-         files = e.target.files;
-         
-         if(files != ''){
-           var dataForm = new FormData();        
-          $.each(files, function(key, value) {
-             dataForm.append('file', value);
-          });   
-          
-          dataForm.append('date_dir', 1);
-          dataForm.append('folder', 'tmp');
-
-          $.ajax({
-            url: $('#route_upload_tmp_image').val(),
-            type: "POST",
-            async: false,      
-            data: dataForm,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-              if(response.image_path){
-                $('#thumbnail_image_pro').attr('src',$('#upload_url').val() + response.image_path);
-                $( '#image_pro' ).val( response.image_path );
-                $( '#pro_name' ).val( response.image_name );
-              }
-              console.log(response.image_path);
-                //window.location.reload();
-            },
-            error: function(response){                             
-                var errors = response.responseJSON;
-                for (var key in errors) {
-                  
-                }
-                //$('#btnLoading').hide();
-                //$('#btnSave').show();
-            }
-          });
-        }
-      });
-      $('.btnLienQuan').click(function(){
-        var type = $(this).attr('data-value');
-        if( type == "phukien") {
-          $('#label-search').html("phụ kiện đi kèm");
-        }else if( type == "tuongtu" ){
-          $('#label-search').html("sản phẩm tương tự");
-        }else{
-          $('#label-search').html("sản phẩm so sánh");
-        }
-        filterAjax(type);
-      });      
+    $(document).ready(function(){      
+      
       $('#loai_id').change(function(){
         location.href="{{ route('product.create') }}?loai_id=" + $(this).val();
       })
@@ -431,30 +378,7 @@ $(document).on('click', 'button.btnSaveSearch',function(){
           filebrowserImageUploadUrl: "{{ URL::asset('/admin/dist/js/kcfinder/upload.php?type=images') }}",
           filebrowserFlashUploadUrl: "{{ URL::asset('/admin/dist/js/kcfinder/upload.php?type=flash') }}"
       });
-      var editor2 = CKEDITOR.replace( 'khuyen_mai',{
-          language : 'vi',
-          height : 100,
-          toolbarGroups : [
-            
-            { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-            { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
-            { name: 'links', groups: [ 'links' ] },           
-            '/',
-            
-          ]
-      });
-      var editor3 = CKEDITOR.replace( 'mo_ta',{
-          language : 'vi',
-          height : 100,
-          toolbarGroups : [
-            
-            { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-            { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
-            { name: 'links', groups: [ 'links' ] },           
-            '/',
-            
-          ]
-      });
+      
       $('#btnUploadImage').click(function(){        
         $('#file-image').click();
       }); 
@@ -523,34 +447,7 @@ $(document).on('click', 'button.btnSaveSearch',function(){
               }
             });
          }
-      });  
-       $('#name_extend').change(function(){
-         var name = $.trim( $(this).val() );
-         if( name != '' && $('#slug_extend').val() == ''){
-            $.ajax({
-              url: $('#route_get_slug').val(),
-              type: "POST",
-              async: false,      
-              data: {
-                str : name
-              },              
-              success: function (response) {
-                if( response.str ){                  
-                  $('#slug_extend').val( response.str );
-                }                
-              },
-              error: function(response){                             
-                  var errors = response.responseJSON;
-                  for (var key in errors) {
-                    
-                  }
-                  //$('#btnLoading').hide();
-                  //$('#btnSave').show();
-              }
-            });
-         }
-      });     
-     
+      });        
       
     });
     
