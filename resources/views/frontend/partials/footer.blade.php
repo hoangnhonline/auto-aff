@@ -1,6 +1,6 @@
 <div class="footer5 footer11">
 	<div class="container">
-		<div class="footer-top footer-top5">
+		<!--<div class="footer-top footer-top5">
 			<div class="logo-footer">
 				<a href="#"><img alt="" src="{{ URL::asset('assets/images/home5/logo-footer.png') }}"></a>
 			</div>
@@ -18,61 +18,10 @@
 					<li><a href="#">Contact</a></li>
 				</ul>
 			</div>
-		</div>
+		</div>-->
 		<!-- End Footer top -->
-		<div class="online-shipping">
-			<div class="row">
-				<div class="col-md-3 col-sm-6 col-xs-12">
-					<div class="item-online-shipping">
-						<ul>
-							<li><i class="fa fa-credit-card"></i></li>
-							<li>
-								<h3><a href="#">CREATE card</a></h3>
-								<p>Create a free account so you can claim your $100 Reward.</p>
-							</li>
-						</ul>
-					</div>
-				</div>
-				<div class="col-md-3 col-sm-6 col-xs-12">
-					<div class="item-online-shipping">
-						<ul>
-							<li><i class="fa fa-dropbox"></i></li>
-							<li>
-								<h3><a href="#">Order online</a></h3>
-								<p>Hours: 8AM - 11PM </p>
-								<span>All day in week</span>
-							</li>
-						</ul>
-					</div>
-				</div>
-				<div class="col-md-3 col-sm-6 col-xs-12">
-					<div class="item-online-shipping">
-						<ul>
-							<li><i class="fa fa-motorcycle"></i></li>
-							<li>
-								<h3><a href="#">Free Shipping</a></h3>
-								<p>Sollicitudin mauris cursus </p>
-								<span>On orders over $99</span>
-							</li>
-						</ul>
-					</div>
-				</div>
-				<div class="col-md-3 col-sm-6 col-xs-12">
-					<div class="item-online-shipping">
-						<ul>
-							<li><i class="fa fa-cubes"></i></li>
-							<li>
-								<h3><a href="#">Free Returns</a></h3>
-								<p>Nulla tempus sollicitud </p>
-								<span>On all orders.</span>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- End Online Shipping -->
-		<div class="list-footer-box5">
+		
+		<div class="list-footer-box5" style="margin-top:20px">
 			<div class="row">
 				<div class="col-md-3 col-sm-6 col-xs-12">
 					<div class="footer-box">

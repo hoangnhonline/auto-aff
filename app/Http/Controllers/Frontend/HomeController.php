@@ -57,12 +57,15 @@ class HomeController extends Controller
         $value = $request->value;
 
         if($type == 1){
-            $spArr = SanPham::where([
+            $query = SanPham::where([
             'status' => 1,
             'is_aff' => 1,
-            'type' => 1,
-            'loai_id' => $value
-            ])->orderBy(DB::raw('RAND()'))->limit(24)->get();
+            'type' => 1            
+            ]);
+            if( $value > 0){
+                $query->where('loai_id' , $value);
+            }
+            $spArr = $query->orderBy(DB::raw('RAND()'))->limit(24)->get();
         }else{
             $spArr = SanPham::where([
             'status' => 1,
