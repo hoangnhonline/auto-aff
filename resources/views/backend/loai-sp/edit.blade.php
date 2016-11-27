@@ -43,7 +43,14 @@
                       </ul>
                   </div>
               @endif
-              
+              <div class="form-group">
+                <label>Loại danh mục <span class="red-star">*</span></label>
+                 <select class="form-control" name="type" id="type">
+                    <option value="1" {{ $detail->type == 1 ? "selected" : "" }}>Deal hôm nay</option>
+                    <option value="2" {{ $detail->type == 2 ? "selected" : "" }}>Bán chạy</option>
+                    <option value="3" {{ $detail->type == 3 ? "selected" : "" }}>Tự kinh doanh</option>
+                  </select>
+              </div>
                <!-- text input -->
               <div class="form-group">
                 <label>Tên danh mục <span class="red-star">*</span></label>
@@ -53,35 +60,7 @@
                 <label>Slug <span class="red-star">*</span></label>
                 <input type="text" class="form-control" name="slug" id="slug" value="{{ $detail->slug }}">
               </div>
-              <div class="clearfix"></div>
-                <div class="form-group" style="margin-top:15px;padding-bottom:25px !important;">
-                  <div class="checkbox col-md-3" >
-                    <label>
-                      <input type="checkbox" name="is_hot" value="1" {{ $detail->is_hot == 1 ? "checked" : "" }}>
-                      Danh mục nổi bật
-                    </label>
-                  </div>
-                  <div class="checkbox col-md-3" >
-                    <label>
-                      <input type="checkbox" name="menu_ngang" value="1" {{ $detail->menu_ngang == 1 ? "checked" : "" }}>
-                      Menu ngang 
-                    </label>
-                  </div>
-                  <div class="checkbox col-md-3" >
-                    <label>
-                      <input type="checkbox" name="menu_doc" value="1" {{ $detail->menu_doc == 1 ? "checked" : "" }}>
-                      Menu dọc
-                    </label>
-                  </div>
-                  <div class="checkbox col-md-3" >
-                    <label>
-                      <input type="checkbox" name="is_hover" value="1" {{ $detail->is_hover == 1 ? "checked" : "" }}>
-                      Hover hiện thông tin
-                    </label>
-                  </div>
-                </div>
-                <div class="clearfix"></div>
-              <!-- textarea -->
+             
               <div class="form-group">
                 <label>Mô tả</label>
                 <textarea class="form-control" rows="4" name="description" id="description">{{ $detail->description }}</textarea>
@@ -94,65 +73,7 @@
                   <option value="0" {{ $detail->status == 0 ? "selected" : "" }}>Ẩn</option>
                   <option value="1" {{ $detail->status == 1 ? "selected" : "" }}>Hiện</option>
                 </select>
-              </div>
-              <div class="form-group">
-                <label>Style banner</label>
-                <select class="form-control" name="home_style" id="home_style">                  
-                  <option value="0" {{ $detail->home_style == 0 ? "selected" : "" }}>Không banner</option>
-                  <option value="1" {{ $detail->home_style == 1 ? "selected" : "" }}>Banner đứng lớn</option>
-                  <option value="2" {{ $detail->home_style == 2 ? "selected" : "" }}>Banner đứng nhỏ</option>
-                  <option value="3" {{ $detail->home_style == 3 ? "selected" : "" }}>Banner ngang</option>
-                </select>
-              </div>   
-              <div class="form-group" style="margin-top:10px">  
-                <label class="col-md-3 row">Icon màu</label>    
-                <div class="col-md-9">
-                  <img id="thumbnail_mau" src="{{ $detail->icon_mau ? Helper::showImage($detail->icon_mau) : 'http://placehold.it/60x60' }}" class="img-thumbnail" width="60" height="60">
-                  
-                  <input type="file" id="file-mau" style="display:none" />
-               
-                  <button class="btn btn-default" id="btnUploadMau" type="button"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Upload</button>
-                </div>
-              </div> 
-              <div class="form-group" style="margin-top:10px">  
-                <label class="col-md-3 row">Icon khuyến mãi</label>    
-                <div class="col-md-9">
-                  <img id="thumbnail_km" src="{{ $detail->icon_km ? Helper::showImage($detail->icon_km) : 'http://placehold.it/60x60' }}" class="img-thumbnail" width="60" height="60">
-                  
-                  <input type="file" id="file-km" style="display:none" />
-               
-                  <button class="btn btn-default" id="btnUploadKm" type="button"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Upload</button>
-                </div>
-              </div> 
-              <div class="form-group" style="margin-top:10px">  
-                <label class="col-md-3 row">Icon trắng </label>    
-                <div class="col-md-9">
-                  <img id="thumbnail_icon" src="{{ $detail->icon_url ? Helper::showImage($detail->icon_url) : 'http://placehold.it/60x60' }}" class="img-thumbnail" width="60" height="60">
-                  
-                  <input type="file" id="file-icon" style="display:none" />
-               
-                  <button class="btn btn-default" id="btnUploadIcon" type="button"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Upload</button>
-                </div>
-              </div> 
-                
-              <div class="form-group" style="margin-top:10px">  
-                <label class="col-md-3 row">Banner menu</label>    
-                <div class="col-md-9">
-                  <img id="thumbnail_banner" src="{{ $detail->banner_menu ? Helper::showImage($detail->banner_menu) : 'http://placehold.it/60x60' }}" class="img-thumbnail" width="120" height="120">
-                  
-                  <input type="file" id="file-banner" style="display:none" />
-               
-                  <button class="btn btn-default" id="btnUploadBanner" type="button"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Upload</button>
-                </div>
-              </div>              
-              <div class="form-group">
-                <label>Màu nền</label>
-                <input type="text" class="form-control" name="bg_color" id="bg_color" value="{{ $detail->bg_color }}">
-              </div>
-              <div class="form-group">
-                  <label>Phí dịch vụ</label>
-                  <input type="text" class="form-control" name="phi_dich_vu" id="phi_dich_vu" value="{{ $detail->phi_dich_vu }}">
-                </div>
+              </div>             
             </div>         
             <!-- /.box-body -->           
             <input type="hidden" name="icon_url" id="icon_url" value="{{ $detail->icon_url }}"/>          

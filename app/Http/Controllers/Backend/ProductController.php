@@ -31,17 +31,14 @@ class ProductController extends Controller
     public function index(Request $request)
     {
 
+
         $arrSearch['status'] = $status = isset($request->status) ? $request->status : 1;
         $arrSearch['is_hot'] = $is_hot = isset($request->is_hot) ? $request->is_hot : null;
         $arrSearch['is_sale'] = $is_sale = isset($request->is_sale) ? $request->is_sale : null;
         $arrSearch['loai_id'] = $loai_id = isset($request->loai_id) ? $request->loai_id : null;
         $arrSearch['cate_id'] = $cate_id = isset($request->cate_id) ? $request->cate_id : null;
 
-        $arrSearch['het_hang'] = $het_hang = isset($request->het_hang) ? $request->het_hang : null;
-        $arrSearch['chua_nhap_gia'] = $chua_nhap_gia = isset($request->chua_nhap_gia) ? $request->chua_nhap_gia : null;
-        $arrSearch['thieu_can_nang'] = $thieu_can_nang = isset($request->thieu_can_nang) ? $request->thieu_can_nang : null;
-        $arrSearch['thieu_kich_thuoc'] = $thieu_kich_thuoc = isset($request->thieu_kich_thuoc) ? $request->thieu_kich_thuoc : null;
-
+        
         $arrSearch['name'] = $name = isset($request->name) && trim($request->name) != '' ? trim($request->name) : '';
         
         $query = SanPham::where('san_pham.status', $status);
@@ -56,41 +53,30 @@ class ProductController extends Controller
         }
         if( $cate_id ){
             $query->where('san_pham.cate_id', $cate_id);
-        }
-        if( $het_hang ){
-            $query->where('san_pham.so_luong_ton', 0);
-        }
-        if( $chua_nhap_gia ){
-            $query->where('san_pham.price', 0);
-        }
-        if( $thieu_can_nang ){
-            $query->where('san_pham.can_nang', 0);
-        }
-        if( $thieu_kich_thuoc ){
-            $query->where('san_pham.chieu_dai', 0);
-            $query->orWhere('san_pham.chieu_rong', 0);
-            $query->orWhere('san_pham.chieu_cao', 0);
-        }
+        }                
+       
         if( $name != ''){
-            $query->where('san_pham.name', 'LIKE', '%'.$name.'%');
-            $query->orWhere('name_extend', 'LIKE', '%'.$name.'%');
+            $query->where('san_pham.name', 'LIKE', '%'.$name.'%');            
         }
         $query->join('users', 'users.id', '=', 'san_pham.created_user');
         $query->join('loai_sp', 'loai_sp.id', '=', 'san_pham.loai_id');
         $query->join('cate', 'cate.id', '=', 'san_pham.cate_id');
         $query->leftJoin('sp_hinh', 'sp_hinh.id', '=','san_pham.thumbnail_id');        
         $query->orderBy('san_pham.id', 'desc');
-        $items = $query->select(['sp_hinh.image_url','san_pham.*','san_pham.id as sp_id', 'full_name' , 'san_pham.created_at as time_created', 'users.full_name', 'loai_sp.name as ten_loai', 'cate.name as ten_cate'])
+        $items = $query->select(['sp_hinh.image_url','san_pham.*','san_pham.id as sp_id', 'full_name' , 'san_pham.created_at as time_created', 'users.full_name', 'loai_sp.name as ten_loai', 'cate.name as ten_cate', 'thumbnail_url', 'aff_price', 'aff_price_old'])
         ->paginate(50);   
-
-        $loaiSpArr = LoaiSp::all();  
+        
+        $type = $request->type ? $request->type : 1;
+        
+        $loaiSpArr = LoaiSp::where('type', $type)->orderBy('display_order')->get();  
+        
         if( $loai_id ){
             $cateArr = Cate::where('loai_id', $loai_id)->orderBy('display_order', 'desc')->get();
         }else{
             $cateArr = (object) [];
         }
 
-        return view('backend.product.index', compact( 'items', 'arrSearch', 'loaiSpArr', 'cateArr'));
+        return view('backend.product.index', compact( 'items', 'arrSearch', 'loaiSpArr', 'cateArr', 'type'));
     }
     public function short(Request $request)
     {

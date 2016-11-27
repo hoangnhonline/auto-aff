@@ -63,7 +63,7 @@
                 <div class="form-group" style="margin-top:10px;margin-bottom:10px">  
                   <label class="col-md-3 row">Banner nhỏ</label>    
                   <div class="col-md-9">
-                    <img id="thumbnail_small" src="{{ old('banner_small') ? Helper::showImage(old('banner_small')) : URL::asset('backend/dist/img/img.png') }}" class="img-thumbnail" width="80" >
+                    <img id="thumbnail_small" src="{{ old('banner_small') ? Helper::showImage(old('banner_small')) : URL::asset('admin/dist/img/img.png') }}" class="img-thumbnail" width="80" >
                     
                     <input type="file" id="file-small" style="display:none" />
                  
@@ -74,7 +74,7 @@
                 <div class="form-group" style="margin-top:10px;margin-bottom:10px">  
                   <label class="col-md-3 row">Banner lớn</label>    
                   <div class="col-md-9">
-                    <img id="thumbnail_large" src="{{ old('large_banner') ? Helper::showImage(old('large_banner')) : URL::asset('backend/dist/img/img.png') }}" class="img-thumbnail" width="200" >
+                    <img id="thumbnail_large" src="{{ old('large_banner') ? Helper::showImage(old('large_banner')) : URL::asset('admin/dist/img/img.png') }}" class="img-thumbnail" width="200" >
                     
                     <input type="file" id="file-large" style="display:none" />
                  
@@ -148,7 +148,7 @@
 
 @stop
 @section('javascript_page')
-<script src="{{ URL::asset('backend/dist/js/ckeditor/ckeditor.js') }}"></script>
+<script src="{{ URL::asset('admin/dist/js/ckeditor/ckeditor.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('assets/js/jquery.datetimepicker.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function(){

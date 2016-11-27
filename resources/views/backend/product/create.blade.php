@@ -42,12 +42,10 @@
 
                   <!-- Nav tabs -->
                   <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Thông tin cơ bản</a></li>
-                    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Thông tin chi tiết</a></li>
+                    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Thông tin chi tiết</a></li>
+                  
                     <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Hình ảnh</a></li>
-                    <li role="presentation"><a href="#thuoctinh" aria-controls="thuoctinh" role="tab" data-toggle="tab">Thuộc tính</a></li>
-                    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Thông tin liên quan</a></li>  
-                    <li role="presentation"><a href="#quatang" aria-controls="messages" role="tab" data-toggle="tab">Quà tặng</a></li>                    
+                               
                   </ul>
 
                   <!-- Tab panes -->
@@ -80,14 +78,7 @@
                           <label>Slug <span class="red-star">*</span></label>                  
                           <input type="text" class="form-control" name="slug" id="slug" value="{{ old('slug') }}">
                         </div>
-                        <div class="form-group" >                  
-                          <label>Tên mở rộng</label>
-                          <input type="text" class="form-control" name="name_extend" id="name_extend" value="{{ old('name_extend') }}">
-                        </div>
-                        <div class="form-group">                  
-                          <label>Slug mở rộng</label>                  
-                          <input type="text" class="form-control" name="slug_extend" id="slug_extend" value="{{ old('slug_extend') }}">
-                        </div>
+                        
                         <div class="col-md-6 none-padding">
                           <div class="checkbox">
                               <label><input type="checkbox" name="is_hot" alue="1"> Sản phẩm HOT </label>
@@ -111,73 +102,12 @@
                             <input type="text" class="form-control" name="sale_percent" id="sale_percent" value="{{ old('price_sale') }}">
                         </div>
                         <div class="clearfix"></div>
+                         <div class="form-group">
+                            <label>Chi tiết</label>
+                            <textarea class="form-control" rows="10" name="chi_tiet" id="chi_tiet">{{ old('chi_tiet') }}</textarea>
+                          </div>
                     </div><!--end thong tin co ban-->                    
-                    <div role="tabpanel" class="tab-pane" id="profile">
-                      <div class="col-md-4 none-padding">
-                        <label>Số lượng tồn<span class="red-star">*</span></label>                  
-                        <input type="text" class="form-control" name="so_luong_ton" id="so_luong_ton" value="{{ old('so_luong_ton') }}">                        
-                      </div>
-                      <div class="col-md-4 none-padding pleft-5">
-                          <label>Màu sắc</label>
-                          <select name="color_id" id="color_id" class="form-control">
-                              <option value="">--chọn--</option>
-                              @if( $colorArr->count() > 0)
-                                @foreach( $colorArr as $color )
-                                    <option value="{{ $color->id }}">{{ $color->name }}</option>
-                                @endforeach
-                              @endif
-
-                          </select>
-                      </div>
-                      <div class="col-md-4 none-padding pleft-5">
-                        <label>Cân nặng<span class="red-star">*</span></label>                  
-                        <input type="text" class="form-control" name="can_nang" id="can_nang" value="{{ old('can_nang') }}">                        
-                      </div>
-                      <div class="col-md-4 none-padding">
-                        <label>Chiều dài<span class="red-star">*</span></label>                  
-                        <input type="text" class="form-control" name="chieu_dai" id="chieu_dai" value="{{ old('chieu_dai') }}">                        
-                      </div>
-                      <div class="col-md-4 none-padding pleft-5">
-                        <label>Chiều rộng<span class="red-star">*</span></label>                  
-                        <input type="text" class="form-control" name="chieu_rong" id="chieu_rong" value="{{ old('chieu_rong') }}">                        
-                      </div>
-                      <div class="col-md-4 none-padding pleft-5">
-                        <label>Chiều cao<span class="red-star">*</span></label>                  
-                        <input type="text" class="form-control" name="chieu_cao" id="chieu_cao" value="{{ old('chieu_cao') }}">                        
-                      </div>
-                      @if($loai_id == 7)
-                      <div class="form-group">
-                        <label>Số khe RAM (Mainboard)</label>                  
-                        <input type="text" class="form-control" name="khe_ram" id="khe_ram" value="{{ old('khe_ram') }}">                        
-                      </div>
-                      @endif
-                      <div class="clearfix"></div> 
-                      <div class="form-group">
-                        <div class="checkbox">
-                            <label><input type="checkbox" name="is_primary" value="1"> Sản phẩm đại diện </label>
-                        </div>                                                  
-                          <input type="text" class="form-control" placeholder="Tên đại diện hiển thị" name="name_primary" id="name_primary" value="{{ old('name_primary') }}">
-                      </div>
-                      <div class="form-group">
-                          
-                      </div>
-                      
-                      <div class="form-group col-md-6 none-padding">
-                          <label>Mô tả ngắn</label>
-                          <textarea class="form-control" rows="4" name="mo_ta" id="mo_ta">{{ old('mo_ta') }}</textarea>
-                        </div>
-                      <div class="form-group col-md-6 none-padding pleft-5">
-                        <label>Khuyến mãi</label>
-                        <textarea class="form-control" rows="4" name="khuyen_mai" id="khuyen_mai">{{ old('khuyen_mai') }}</textarea>
-                      </div>
-                       
-                      <div class="form-group">
-                        <label>Chi tiết</label>
-                        <textarea class="form-control" rows="10" name="chi_tiet" id="chi_tiet">{{ old('chi_tiet') }}</textarea>
-                      </div>
-
-
-                    </div><!--end thong tin chi tiet-->  
+                    
                      <div role="tabpanel" class="tab-pane" id="settings">
                         <div class="form-group" style="margin-top:10px;margin-bottom:10px">  
                          
@@ -193,86 +123,7 @@
                         </div>
 
                      </div><!--end hinh anh-->
-                     <div role="tabpanel" class="tab-pane" id="thuoctinh">
-                     
-                     @if( !empty( $thuocTinhArr ))
-                     <table class="table table-responsive table-bordered">
-                      @foreach($thuocTinhArr as $loaithuoctinh)
-                        <tr style="background-color:#CCC">
-                          <td colspan="2">{{ $loaithuoctinh['name']}}</td>
-                        </tr>
-                        @if( !empty($loaithuoctinh['child']))
-                          @foreach( $loaithuoctinh['child'] as $thuoctinh)
-                          <tr>
-                            <td width="150">{{ $thuoctinh['name']}}</td>
-                            <td><input type="text" class="form-control" name="thuoc_tinh[{{ $thuoctinh['id'] }}]" ></td>
-                          </tr>
-                          @endforeach
-                        @endif
-                      @endforeach
-                      </table>
-                     @endif
-                     
-                     </div>
-                     <div role="tabpanel" class="tab-pane" id="messages">
-                     @if($loai_id == 3)
-                        <div class="col-md-12">
-                        <label>Mục đích sử dụng</label>
-                        <ul id="list_muc_dich">
-                          <li class="col-md-6"><div class="form-group">
-                          <input type="checkbox" name="muc_dich[]" value="1" class="muc_dich" id="van_phong" {{ in_array(1, $mucDichArr) ? "checked" : "" }}>&nbsp;&nbsp;<label for="van_phong">Văn phòng</label>
-                          </div>
-                          </li>
-                          <li class="col-md-6">
-                            <div class="form-group">
-                          <input type="checkbox" name="muc_dich[]" value="2" class="muc_dich" id="do_hoa" {{ in_array(2, $mucDichArr) ? "checked" : "" }}>&nbsp;&nbsp;<label for="do_hoa">Đồ họa</label></div></li>
-                          <li class="col-md-6">
-                            <div class="form-group">
-                          <input type="checkbox" name="muc_dich[]" value="3" class="muc_dich" id="game" {{ in_array(3, $mucDichArr) ? "checked" : "" }}>&nbsp;&nbsp;<label for="game">Game</label></div></li>
-                          <li class="col-md-6">
-                            <div class="form-group">
-                            <input type="checkbox" name="muc_dich[]" value="4" class="muc_dich" id="am_thanh" {{ in_array(4, $mucDichArr) ? "checked" : "" }}>&nbsp;&nbsp;<label for="am_thanh">Âm thanh</label></div></li>
-                        </ul>
-                      </div>
-                      @endif
-                        <div class="col-md-4">
-                            <button class="btn btn-warning btn-sm btnLienQuan" data-value="phukien" type="button" id="btnPhuKien">Phụ kiện đi kèm</button>
-                            <div class="clearfix"></div>
-                            <div id="dataPhuKien" class="col-md-12 none-padding" style="min-height:150px; margin-top:5px"></div>
-                        </div>
-                        <div class="col-md-4">
-                            <button class="btn btn-warning btn-sm btnLienQuan" data-value="tuongtu" type="button" id="btnTuongTu">Sản phẩm tương tự</button>
-                            <div class="clearfix"></div>
-                            <div id="dataTuongTu" class="col-md-12 none-padding" style="min-height:150px; margin-top:5px"></div>
-                        </div>
-                        <div class="col-md-4">
-                            <button class="btn btn-warning btn-sm btnLienQuan" data-value="sosanh" type="button" id="btnSoSanh">Sản phẩm so sánh</button>
-                            <div class="clearfix"></div>
-                            <div id="dataSoSanh" class="col-md-12 none-padding" style="min-height:150px; margin-top:5px"></div>
-                        </div>                        
-                        <div class="clearfix"></div>
-                     </div><!--end thong tin lien quan -->
-                      <div role="tabpanel" class="tab-pane" id="quatang">
-                        <div class="col-md-12 none-padding pleft-5">
-                          <label>Kiểu hiển thị</label>
-                          <select name="pro_style" id="pro_style" class="form-control">
-                              <option value="0">Không có quà</option>
-                              <option value="1">Hover ảnh</option>
-                              <option value="2">Icon phía trên</option>                         </select>
-                        </div>
-                        <div class="form-group col-md-12" style="margin-top:10px;margin-bottom:10px">  
-                          <label class="col-md-3 row">Ảnh quà tặng </label>
-                          <div class="col-md-9">
-                            <img id="thumbnail_image_pro" src="{{ old('image_pro') ? Helper::showImage(old('image_pro')) : URL::asset('backend/dist/img/img.png') }}" class="img-thumbnail" width="150">
-                            
-                            <input type="file" id="file-pro" style="display:none" />
-                         
-                            <button class="btn btn-default" id="btnUploadPro" type="button"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Upload</button>
-                          </div>
-                          <div style="clear:both"></div>
-                        </div>
-                        <div class="clearfix"></div>
-                      </div><!--end quatang -->
+                    
                   </div>
 
                 </div>
@@ -343,7 +194,7 @@
 </style>
 @stop
 @section('javascript_page')
-<script src="{{ URL::asset('backend/dist/js/ckeditor/ckeditor.js') }}"></script>
+<script src="{{ URL::asset('admin/dist/js/ckeditor/ckeditor.js') }}"></script>
 <script type="text/javascript">
 function filterAjax(type){  
   var str_params = $('#formSearchAjax').serialize();
@@ -353,7 +204,7 @@ function filterAjax(type){
           async: true,      
           data: str_params + '&search_type=' + type,
           beforeSend:function(){
-            $('#contentSearch').html('<div style="text-align:center"><img src="{{ URL::asset('backend/dist/img/loading.gif')}}"></div>');
+            $('#contentSearch').html('<div style="text-align:center"><img src="{{ URL::asset('admin/dist/img/loading.gif')}}"></div>');
           },        
           success: function (response) {
             $('#contentSearch').html(response);
@@ -573,12 +424,12 @@ $(document).on('click', 'button.btnSaveSearch',function(){
       var editor = CKEDITOR.replace( 'chi_tiet',{
           language : 'vi',
           height: 300,
-          filebrowserBrowseUrl: "{{ URL::asset('/backend/dist/js/kcfinder/browse.php?type=files') }}",
-          filebrowserImageBrowseUrl: "{{ URL::asset('/backend/dist/js/kcfinder/browse.php?type=images') }}",
-          filebrowserFlashBrowseUrl: "{{ URL::asset('/backend/dist/js/kcfinder/browse.php?type=flash') }}",
-          filebrowserUploadUrl: "{{ URL::asset('/backend/dist/js/kcfinder/upload.php?type=files') }}",
-          filebrowserImageUploadUrl: "{{ URL::asset('/backend/dist/js/kcfinder/upload.php?type=images') }}",
-          filebrowserFlashUploadUrl: "{{ URL::asset('/backend/dist/js/kcfinder/upload.php?type=flash') }}"
+          filebrowserBrowseUrl: "{{ URL::asset('/admin/dist/js/kcfinder/browse.php?type=files') }}",
+          filebrowserImageBrowseUrl: "{{ URL::asset('/admin/dist/js/kcfinder/browse.php?type=images') }}",
+          filebrowserFlashBrowseUrl: "{{ URL::asset('/admin/dist/js/kcfinder/browse.php?type=flash') }}",
+          filebrowserUploadUrl: "{{ URL::asset('/admin/dist/js/kcfinder/upload.php?type=files') }}",
+          filebrowserImageUploadUrl: "{{ URL::asset('/admin/dist/js/kcfinder/upload.php?type=images') }}",
+          filebrowserFlashUploadUrl: "{{ URL::asset('/admin/dist/js/kcfinder/upload.php?type=flash') }}"
       });
       var editor2 = CKEDITOR.replace( 'khuyen_mai',{
           language : 'vi',

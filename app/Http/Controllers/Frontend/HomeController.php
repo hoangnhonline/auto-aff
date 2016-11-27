@@ -8,23 +8,14 @@ use App\Http\Controllers\Controller;
 use App\Models\LoaiSp;
 use App\Models\Cate;
 use App\Models\SanPham;
-use App\Models\SpThuocTinh;
 use App\Models\SpHinh;
-use App\Models\ThuocTinh;
-use App\Models\LoaiThuocTinh;
 use App\Models\Banner;
-use App\Models\HoverInfo;
-use App\Models\Location;
-use App\Models\TinhThanh;
 use App\Models\Articles;
 use App\Models\ArticlesCate;
 use App\Models\Customer;
 use App\Models\Newsletter;
-use App\Models\PriceRange;
 use App\Models\Settings;
-use App\Models\LinkSite;
-use App\Models\LinkImage;
-use Helper, File, Session, Auth, Hash;
+use Helper, File, Session, Auth, Hash, DB;
 
 class HomeController extends Controller
 {
@@ -61,20 +52,54 @@ class HomeController extends Controller
 
 
     }
-    public function loadSlider(){
-        return view('frontend.home.ajax-slider');
+    public function loadProductTab(Request $request){
+        $type = $request->type;
+        $value = $request->value;
+
+        if($type == 1){
+            $spArr = SanPham::where([
+            'status' => 1,
+            'is_aff' => 1,
+            'type' => 1,
+            'loai_id' => $value
+            ])->orderBy(DB::raw('RAND()'))->limit(24)->get();
+        }else{
+            $spArr = SanPham::where([
+            'status' => 1,
+            'is_aff' => 1,
+            'type' => 2,
+            'loai_id' => $value
+            ])->orderBy(DB::raw('RAND()'))->limit(24)->get();
+        }
+        return view('frontend.home.load-product-tab', compact('spArr'));
     }
     public function index(Request $request)
     {  
         $productArr = [];
         $hoverInfo = [];
+        /* deal hom nay */
+        $cateDeal = LoaiSP::where('type', 1)->where('id' , '>', 2)->orderBy('display_order')->get();
+        $spDeal = SanPham::where([
+            'status' => 1,
+            'is_aff' => 1,
+            'type' => 1
+            ])->orderBy(DB::raw('RAND()'))->limit(24)->get();
+
+        /* ban chay*/
+        $cateBest = LoaiSP::where('type', 2)->orderBy('display_order')->get();
+        $spBest = SanPham::where([
+            'status' => 1,
+            'is_aff' => 1,
+            'loai_id' => 10,
+            'type' => 2
+            ])->orderBy(DB::raw('RAND()'))->limit(24)->get();
+
         $loaiSp = LoaiSp::where('status', 1)->get();
         $bannerArr = [];
         foreach( $loaiSp as $loai){
             $query = SanPham::where(['loai_id' => $loai->id])->where('so_luong_ton', '>', 0)->where('price', '>', 0)
-            ->leftJoin('sp_hinh', 'sp_hinh.id', '=','san_pham.thumbnail_id')
-            ->leftJoin('sp_thuoctinh', 'sp_thuoctinh.sp_id', '=','san_pham.id')
-            ->select('sp_hinh.image_url', 'san_pham.*', 'thuoc_tinh')
+            ->leftJoin('sp_hinh', 'sp_hinh.id', '=','san_pham.thumbnail_id')            
+            ->select('sp_hinh.image_url', 'san_pham.*')
             ->where('sp_hinh.image_url', '<>', '');
             if($loai->price_sort == 0){
                 $query->where('price', '>', 0)->orderBy('san_pham.price', 'asc');
@@ -94,12 +119,8 @@ class HomeController extends Controller
                 $query->limit(8);
             }else{
                 $query->limit(8);
-            }
-            if( $loai->home_style > 0 ){
-                $bannerArr[$loai->id] = Banner::where(['object_id' => $loai->id, 'object_type' => 1])->orderBy('display_order', 'asc')->orderBy('id', 'asc')->get();
-            }
-
-            $hoverInfo[$loai->id] = HoverInfo::where('loai_id', $loai->id)->orderBy('display_order', 'asc')->orderBy('id', 'asc')->limit(8)->get();
+            }            
+           
             $productArr[$loai->id] = $query->get()->toArray();
             
             $settingArr = Settings::whereRaw('1')->lists('value', 'name');
@@ -111,7 +132,17 @@ class HomeController extends Controller
         }    
         $articlesArr = Articles::where(['cate_id' => 1, 'is_hot' => 1])->orderBy('id', 'desc')->get();
 
-        return view('frontend.home.index', compact('productArr', 'hoverInfo', 'bannerArr', 'articlesArr', 'socialImage', 'seo'));
+        return view('frontend.home.index', compact(
+                'cateDeal',
+                'spDeal',
+                'cateBest',
+                'spBest',
+                'productArr', 
+                'hoverInfo', 
+                'bannerArr', 
+                'articlesArr', 
+                'socialImage', 
+                'seo'));
     }
     /**
     * Show the form for creating a new resource.

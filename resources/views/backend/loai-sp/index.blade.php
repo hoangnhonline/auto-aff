@@ -21,6 +21,25 @@
       <p class="alert alert-info" >{{ Session::get('message') }}</p>
       @endif
       <a href="{{ route('loai-sp.create') }}" class="btn btn-info" style="margin-bottom:5px">Tạo mới</a>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Bộ lọc</h3>
+        </div>
+        <div class="panel-body">
+          <form class="form-inline" id="searchForm" role="form" method="GET" action="{{ route('loai-sp.index') }}">
+              <div class="form-group">
+              <label for="email">Loại danh mục</label>
+
+              <select class="form-control" name="type" id="type">
+                <option value="1" {{ $type == 1 ? "selected" : "" }}>Deal hôm nay</option>
+                <option value="2" {{ $type == 2 ? "selected" : "" }}>Bán chạy</option>
+                <option value="3" {{ $type == 3 ? "selected" : "" }}>Tự kinh doanh</option>
+              </select>
+            </div>                       
+            <button type="submit" style="margin-top:-5px" class="btn btn-primary btn-sm">Lọc</button>
+          </form>         
+        </div>
+      </div>
       <div class="box">
 
         <div class="box-header with-border">
@@ -34,10 +53,7 @@
               <th style="width: 1%">#</th>
               <th style="width: 1%;white-space:nowrap">Thứ tự</th>
               <th>Tên</th>
-              <th style="text-align:center">Danh mục con</th>
-              <th style="text-align:center">Icon</th>         
-              <th>Style hiển thị</th>
-              <th style="text-align:center">Màu nền</th>
+              <th style="text-align:center">Danh mục con</th>              
               <th width="1%;white-space:nowrap">Thao tác</th>
             </tr>
             <tbody>
@@ -48,44 +64,19 @@
               <tr id="row-{{ $item->id }}">
                 <td><span class="order">{{ $i }}</span></td>
                 <td style="vertical-align:middle;text-align:center">
-                  <img src="{{ URL::asset('backend/dist/img/move.png')}}" class="move img-thumbnail" alt="Cập nhật thứ tự"/>
+                  <img src="{{ URL::asset('admin/dist/img/move.png')}}" class="move img-thumbnail" alt="Cập nhật thứ tự"/>
                 </td>
                 <td>                  
                   <a href="{{ route( 'loai-sp.edit', [ 'id' => $item->id ]) }}">{{ $item->name }}</a>
                   
                   @if( $item->is_hot == 1 )
-                  <img class="img-thumbnail" src="{{ URL::asset('backend/dist/img/star.png')}}" alt="Nổi bật" title="Nổi bật" />
-                  @endif
-                   @if( $item->is_hover == 1 )
-                  <a href="{{ route('loai-sp.thuoc-tinh', [ 'loai_id' => $item->id ]) }}" style="float:right"><label style="cursor:pointer" class="label label-info">Thuộc tính hover</label></a>
-                  @endif
+                  <img class="img-thumbnail" src="{{ URL::asset('admin/dist/img/star.png')}}" alt="Nổi bật" title="Nổi bật" />
+                  @endif                  
                   <p>{{ $item->description }}</p>
                 </td>
-                <td style="text-align:center"><a class="btn btn-info" href="{{ route('cate.index', [$item->id])}}">{{ $item->cates->count() }}</a></td>
-                <td style="text-align:center">
-                  <img class="img-thumbnail" src="{{ $item->icon_mau ? config( 'icho.upload_url' ).$item->icon_mau  : 'http://placehold.it/60x60' }}" width="40" />
-                </td>               
-                <td>
-                 <?php
-                  if( $item->home_style == 1 ) echo "Banner lớn đứng ";
-                  elseif( $item->home_style == 2 ) echo "Banner nhỏ đứng ";
-                  elseif( $item->home_style == 3 ) echo "Banner ngang ";
-                  else echo "Không banner";
-                  ?>
-                </td>
-                <td style="text-align:center">
-                  @if( $item->bg_color )
-                    <span class="img-thumbnail" style="width:40px; height:40px;background-color:{{ $item->bg_color }};display:block;margin:auto">&nbsp;</span>
-                  @else
-                  Mặc định
-                  @endif
-                </td>
-                <td style="white-space:nowrap; text-align:right">
-                  @if($item->home_style > 0)
-                  <a class="btn btn-primary btn-sm" href="{{ route('banner.index', ['object_type' => 1, 'object_id' => $item->id]) }}" ><span class="badge">
-                    {{ $item->banners->count() }}
-                  </span> Banner </a>
-                  @endif
+                <td style="text-align:center"><a class="btn btn-info" href="{{ route('cate.index', [$item->id])}}">{{ $item->cates->count() }}</a></td>                     
+                
+                <td style="white-space:nowrap; text-align:right">                  
                   <a href="{{ route( 'loai-sp.edit', [ 'id' => $item->id ]) }}" class="btn-sm btn btn-warning">Chỉnh sửa</a>                 
                   @if( $item->cates->count() == 0)
                   <a onclick="return callDelete('{{ $item->name }}','{{ route( 'loai-sp.destroy', [ 'id' => $item->id ]) }}');" class="btn-sm btn btn-danger">Xóa</a>
@@ -128,6 +119,9 @@ function callDelete(name, url){
   return flag;
 }
 $(document).ready(function(){
+  $('#type').change(function(){
+    $('#searchForm').submit();
+  });
   $('#table-list-data tbody').sortable({
         placeholder: 'placeholder',
         handle: ".move",

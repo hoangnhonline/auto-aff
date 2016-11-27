@@ -4,84 +4,151 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
-use Goutte, File;
+use Goutte, File, Auth;
 use App\Helpers\simple_html_dom;
+use App\Models\CrawlerUrl;
+use App\Models\SanPham;
 
 class CrawlerController extends Controller
 {
    
     public function index(Request $request){
-        return view('index');    	
-    }
-    public function lazada(Request $request){
-        set_time_limit(10000);
-        for($page = 1; $page <= 2; $page++){ 
-             $crawler = Goutte::request('GET', 'http://www.lazada.vn/tui-xach-tay-nu/?dir=desc&page='.$page.'&sort=discountspecial'); 
-               //var_dump('http://www.lazada.vn/ao-khoac-nu/?dir=desc&page='.$page.'&sort=discountspecial');die;
-             $crawler->filter('.product-card')->each(function ($node){
-                $title = $content = $image_url = $link = "";
-                    if($node->filter('img')->count() > 0){
-                     $image_url = $node->filter('img')->attr('data-original');
-                    }   
-                    var_dump($image_url);
-                       echo "<br>";
-                    
-                
-                    $link = $node->filter('a')->attr('href');
-                  $title = $node->filter('div.product-card__name-wrap span')->text();
-                  $price = $node->filter('div.product-card__price')->text();
-                  $price_old = $node->filter('div.product-card__old-price')->text();
-                  $sale_percent = $node->filter('div.product-card__sale')->text();
-                
-                var_dump($link);
-                echo "<br>";
-                var_dump($title);
-                echo "<br>";
-                 var_dump($price);
-                echo "<br>";
-                var_dump($price_old);
-                echo "<br>";
-                var_dump($sale_percent);
-                    echo "<hr>";                
-             });    
+        $dataArr = CrawlerUrl::all();
+        foreach ($dataArr as $key => $value) {
+            $url = $value->url;
+            $site = $this->checkSite($url);
+
+            if($site == "tiki"){
+
+                $dataArr = $this->tiki($url, $value->loai_id, $value->cate_id, $value->type);              
+
+
+            }elseif($site == "adayroi"){
+
+                $dataArr = $this->adayroi($url, $value->loai_id, $value->cate_id, $value->type);                
+            }
+            elseif($site == "sendo"){
+
+                $dataArr = $this->sendo($url, $value->loai_id, $value->cate_id, $value->type);
+               
+            }else{
+               
+                $dataArr = $this->lazada($url, $value->loai_id, $value->cate_id, $value->type);
+               
+            }
         }
+        die;
+
     }
-    public function adayroi(Request $request){
+    public function lazada($url, $loai_id, $cate_id, $type){
         
         set_time_limit(10000);
+          $arr = ['loai_id' => $loai_id, 'cate_id' => $cate_id, 'type' => $type];
         for($page = 1; $page <= 1; $page++){ 
-             $crawler = Goutte::request('GET', 'https://www.adayroi.com/tui-vi-m58?p='.$page.'&featured=isPromotion');             
-             $crawler->filter('.col-lg-3.col-xs-4')->each(function ($node){
+                
+          
+             $crawler = Goutte::request('GET', $url);             
+             $crawler->filter('.product-card')->each(function ($node) use ($arr){
+             
+                $title = $link = $price = $price_old = $sale_percent = $image_url = '';                
+                    if($node->filter('.product-card__img img')->count() > 0){
+                     $image_url = $node->filter('.product-card__img img')->attr('data-original');
+                    }   
+             
+                
+                    $link = $node->filter('a')->attr('href');
+                if($node->filter('div.product-card__name-wrap span')->count() > 0){
+                    $title = $node->filter('div.product-card__name-wrap span')->text();
+                }
+                if($node->filter('div.product-card__price')->count() > 0){
+                    $price = $node->filter('div.product-card__price')->text();
+                }
+                if($node->filter('div.product-card__old-price')->count() > 0){
+                    $price_old = $node->filter('div.product-card__old-price')->text();
+                }
+                if($node->filter('div.product-card__sale')->count() > 0){
+                    $sale_percent = $node->filter('div.product-card__sale')->text();
+                }  
+                $params =  [
+                    'name' => $title,
+                    'url' => $link,
+                    'aff_price' => $price,
+                    'aff_price_old' => $price_old,
+                    'aff_sale_percent' => $sale_percent,
+                    'thumbnail_url' => $image_url,
+                    'loai_id' => $arr['loai_id'],
+                    'cate_id' => $arr['cate_id'],
+                    'is_aff' => 1,
+                    'type' => $arr['type'],
+                    'site_id' => 1,
+                    'status' => 1,
+                    'created_user' => Auth::user()->id, 
+                    'updated_user'=>Auth::user()->id
+
+                ];   
+                SanPham::create($params);
+                         
+             });    
+            
+        }
+        return $arr;
+    }
+    public function adayroi($url, $loai_id, $cate_id, $type){        
+        set_time_limit(10000);
+        $arr = ['loai_id' => $loai_id, 'cate_id' => $cate_id, 'type' => $type];
+        for($page = 1; $page <= 1; $page++){ 
+            
+            
+             $crawler = Goutte::request('GET', $url);             
+             $crawler->filter('.col-lg-3.col-xs-4')->each(function ($node) use ($arr){                
                 if($node->filter('.out-of-stock')->count() == 0){
-                $title = $content = $image_url = $link = "";
+                $title = $link = $price = $price_old = $sale_percent = $image_url = '';
                     if($node->filter('img.imglist')->count() > 0){
                      $image_url = $node->filter('img.imglist')->attr('data-src');
                     }   
-                    var_dump($image_url);
-                    echo "<br>";
+                    
                     $link = "https://www.adayroi.com".$node->filter('a')->attr('href');
-                    var_dump($link);
-                    echo "<br>";
-                     $title = $node->filter('.post-title')->text();
-                    var_dump($title);
-                    echo "<br>";
-                 $price = $node->filter('.amount-1')->text();
-                 var_dump($price);
-                echo "<br>";
+                    
+                    if($node->filter('.post-title')->count() > 0){
+                        $title = $node->filter('.post-title')->text();
+                    
+                    }
+                    if($node->filter('.amount-1')->count() > 0){
+                         $price = $node->filter('.amount-1')->text();
+                   
+                    }
                 if($node->filter('.amount-2')->count() > 0){
                     $price_old = $node->filter('.amount-2')->text();
-                    var_dump($price_old);
-                    echo "<br>";
+                   
                 }
                 if($node->filter('.sale-off')->count() > 0){
                     $sale_percent = $node->filter('.sale-off')->text();
-                    var_dump($sale_percent);
+                    
                 }
-                    echo "<hr>";                
+                    $params =  [
+                    'name' => $title,
+                    'url' => $link,
+                    'aff_price' => $price,
+                    'aff_price_old' => $price_old,
+                    'aff_sale_percent' => $sale_percent,
+                    'thumbnail_url' => $image_url,
+                    'loai_id' => $arr['loai_id'],
+                    'cate_id' => $arr['cate_id'],
+                    'is_aff' => 1,
+                    'type' => $arr['type'],
+                    'site_id' => 3,
+                    'status' => 1,
+                    'created_user' => Auth::user()->id, 
+                    'updated_user'=>Auth::user()->id
+                ];   
+                SanPham::create($params); 
                } 
+               
              });
+             
               
         }
+        return $arr;
     }
     public function crawler(Request $request){
 
@@ -230,13 +297,14 @@ class CrawlerController extends Controller
         }
         return $site;
     }
-    public function tiki(Request $request){
-        
+    public function tiki($url, $loai_id, $cate_id, $type){
+        $arr = [];
         set_time_limit(10000);
         for($page = 1; $page <= 1; $page++){ 
              //$crawler = Goutte::request('GET', 'https://tiki.vn/laptop/c2742?order=discount_percent%2Cdesc&page='.$page);   
-             //var_dump('https://tiki.vn/laptop/c2742?order=discount_percent%2Cdesc&page='.$page);
-             $url = 'https://tiki.vn/laptop/c2742?order=discount_percent%2Cdesc&page='.$page; 
+             //var_dump('https://tiki.vn/laptop/c2742?order=discount_percent%2Cdesc&page='.$page);             
+            
+            
              $chs = curl_init();
 
             // set URL and other appropriate options
@@ -254,7 +322,7 @@ class CrawlerController extends Controller
             // Load HTML from a string
             $crawler->load($result);
             foreach($crawler->find('div.product-item') as $node){          
-               
+               $title = $link = $price = $price_old = $sale_percent = $image_url = '';
                 $title = $content = $image_url = $link = "";
                 $count_img = count($node->find('span.image img'));
                 
@@ -266,35 +334,47 @@ class CrawlerController extends Controller
                     }  
                     if($count_img == 3){
                      $image_url = $node->find('span.image img',2)->src;
-                    }   
-                    var_dump($image_url);
-                    echo "<br>";
+                    }                  
                     
                     $link = $node->find('a', 0)->href;
                     $link = strstr($link, '?', true);
-                    var_dump($link);
-                    echo "<br>";
-                    
-                     $title = trim($node->find('span.title', 0)->innertext);
-                    var_dump($title);
-                    echo "<br>";
-                 
-                 $price_tmp = $node->find('.price-sale', 0)->innertext;
-                 $tmpArr = explode('<span', $price_tmp);
-                 $price = $tmpArr[0];
-                 var_dump($price);
-                echo "<br>";
-                  $price_old = $node->find('.price-regular', 0)->innertext;
-                  var_dump($price_old);
-                echo "<br>";
-                  $sale_percent = $node->find('.sale-tag', 0)->innertext;
-                  var_dump($sale_percent);               
-
-                    echo "<hr>";
-
+                   
+                    if($node->find('span.title', 0)){
+                     $title = trim($node->find('span.title', 0)->innertext);                   
+                    }
+                 if($node->find('.price-sale', 0)){
+                    $price_tmp = $node->find('.price-sale', 0)->innertext;
+                    $tmpArr = explode('<span', $price_tmp);
+                    $price = $tmpArr[0];                    
+                }
+                if($node->find('.price-regular', 0)){
+                    $price_old = $node->find('.price-regular', 0)->innertext;                   
+                }
+                if($node->find('.sale-tag', 0)){
+                  $sale_percent = $node->find('.sale-tag', 0)->innertext;                            
+              }
+              $params =  [
+                    'name' => $title,
+                    'url' => $link,
+                    'aff_price' => $price,
+                    'aff_price_old' => $price_old,
+                    'aff_sale_percent' => $sale_percent,
+                    'thumbnail_url' => $image_url,
+                    'loai_id' => $loai_id,
+                    'cate_id' => $cate_id,
+                    'is_aff' => 1,
+                    'type' => $type,
+                    'site_id' => 2,
+                    'status' => 1,
+                    'created_user' => Auth::user()->id, 
+                    'updated_user'=>Auth::user()->id
+                ];  
+                  
+                SanPham::create($params);
             };
               
         }
+        return $arr;
     }
     public function detail(Request $request){
     	set_time_limit(10000);

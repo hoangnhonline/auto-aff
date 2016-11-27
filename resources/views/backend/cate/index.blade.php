@@ -28,6 +28,14 @@
         <div class="panel-body">
           <form class="form-inline" role="form" method="GET" action="{{ route('cate.index') }}" id="formSearch">
             <div class="form-group">
+              <label for="email">Loại danh mục :</label>
+              <select class="form-control" name="type" id="type">
+                  <option value="1" {{ $type == 1 ? "selected" : "" }}>Deal hôm nay</option>
+                  <option value="2" {{ $type == 2 ? "selected" : "" }}>Bán chạy</option>
+                  <option value="3" {{ $type == 3 ? "selected" : "" }}>Tự kinh doanh</option>
+              </select>
+            </div>
+            <div class="form-group">
               <label for="email">Danh mục :</label>
               <select class="form-control" name="loai_id" id="loai_id">
                 @foreach( $loaiSpArr as $value )
@@ -53,9 +61,6 @@
               <th style="width: 1%;white-space:nowrap">Thứ tự</th>
               <th>Tên</th>
               <th style="text-align:center">Sản phẩm</th>
-              <!--<th style="text-align:center">Icon</th>         -->
-              <th>Style hiển thị</th>
-              <th style="text-align:center">Màu nền</th>
               <th width="1%;" style="white-space:nowrap">Thao tác</th>
             </tr>
             <tbody>
@@ -66,33 +71,19 @@
               <tr id="row-{{ $item->id }}">
                 <td><span class="order">{{ $i }}</span></td>
                 <td style="vertical-align:middle;text-align:center">
-                  <img src="{{ URL::asset('backend/dist/img/move.png')}}" class="move img-thumbnail" alt="Cập nhật thứ tự"/>
+                  <img src="{{ URL::asset('admin/dist/img/move.png')}}" class="move img-thumbnail" alt="Cập nhật thứ tự"/>
                 </td>
                 <td>                  
                   <a href="{{ route( 'cate.edit', [ 'id' => $item->id ]) }}">{{ $item->name }}</a>
                   
                   @if( $item->is_hot == 1 )
-                  <img class="img-thumbnail" src="{{ URL::asset('backend/dist/img/star.png')}}" alt="Nổi bật" title="Nổi bật" />
+                  <img class="img-thumbnail" src="{{ URL::asset('admin/dist/img/star.png')}}" alt="Nổi bật" title="Nổi bật" />
                   @endif
 
                   <p>{{ $item->description }}</p>
                 </td> 
                 <td style="text-align:center"><a class="btn btn-info" href="{{ route('cate.index', [$item->id])}}">{{ $item->sanPham->count() }}</a></td>                           
-                <td>
-                  <?php
-                  if( $item->home_style == 1 ) echo "Banner lớn đứng ";
-                  elseif( $item->home_style == 2 ) echo "Banner nhỏ đứng ";
-                  elseif( $item->home_style == 3 ) echo "Banner ngang ";
-                  else echo "Không banner";
-                  ?>
-                </td>
-                <td style="text-align:center">
-                  @if( $item->bg_color )
-                    <span class="img-thumbnail" style="width:40px; height:40px;background-color:{{ $item->bg_color }};display:block;margin:auto">&nbsp;</span>
-                  @else
-                  Mặc định
-                  @endif
-                </td>
+             
                 <td style="white-space:nowrap; text-align:right">
                   @if($item->home_style > 0)
                   <a class="btn-sm btn btn-primary" href="{{ route('banner.index', ['object_type' => 2, 'object_id' => $item->id]) }}" ><span class="badge">{{ $item->banners->count() }}</span> Banner </a>
@@ -140,7 +131,7 @@ function callDelete(name, url){
   return flag;
 }
 $(document).ready(function(){
-  $('#loai_id').change(function(){
+  $('#loai_id, #type').change(function(){
     $('#formSearch').submit();
   });
   $('#table-list-data tbody').sortable({

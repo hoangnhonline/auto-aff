@@ -27,9 +27,14 @@
         </div>
         <div class="panel-body">
           <form class="form-inline" id="searchForm" role="form" method="GET" action="{{ route('product.index') }}">
-           
-          
-            
+            <div class="form-group">
+              <label for="email">Loại danh mục :</label>
+              <select class="form-control" name="type" id="type">
+                  <option value="1" {{ $type == 1 ? "selected" : "" }}>Deal hôm nay</option>
+                  <option value="2" {{ $type == 2 ? "selected" : "" }}>Bán chạy</option>
+                  <option value="3" {{ $type == 3 ? "selected" : "" }}>Tự kinh doanh</option>
+              </select>
+            </div>
             <div class="form-group">
               <label for="email">Danh mục cha</label>
               <select class="form-control" name="loai_id" id="loai_id">
@@ -58,24 +63,14 @@
               <label class="radio-inline"><input type="radio" {{ $arrSearch['status'] == 1 ? "checked" : "" }} name="status" value="1">Hiện</label>
               <label class="radio-inline"><input type="radio" {{ $arrSearch['status'] == 0 ? "checked" : "" }} name="status" value="0">Ẩn</label>              
             </div>-->
+            @if($type == 3)
             <div class="form-group">
               <label><input type="checkbox" name="is_hot" value="1" {{ $arrSearch['is_hot'] == 1 ? "checked" : "" }}> Hiện trang chủ</label>              
             </div>
             <div class="form-group">
               <label><input type="checkbox" name="is_sale" value="1" {{ $arrSearch['is_sale'] == 1 ? "checked" : "" }}> Giảm giá</label>              
             </div>
-            <div class="form-group">
-              <label><input type="checkbox" name="het_hang" value="1" {{ $arrSearch['het_hang'] == 1 ? "checked" : "" }}> Hết hàng</label>              
-            </div>
-            <div class="form-group">
-              <label><input type="checkbox" name="chua_nhap_gia" value="1" {{ $arrSearch['chua_nhap_gia'] == 1 ? "checked" : "" }}> Chưa nhập giá</label>
-            </div>
-            <div class="form-group">
-              <label><input type="checkbox" name="thieu_kich_thuoc" value="1" {{ $arrSearch['thieu_kich_thuoc'] == 1 ? "checked" : "" }}> Thiếu kích thước</label>
-            </div>
-            <div class="form-group">
-              <label><input type="checkbox" name="thieu_can_nang" value="1" {{ $arrSearch['thieu_can_nang'] == 1 ? "checked" : "" }}> Thiếu cân nặng</label>
-            </div>           
+            @endif
             <button type="submit" style="margin-top:-5px" class="btn btn-primary btn-sm">Lọc</button>
           </form>         
         </div>
@@ -108,22 +103,27 @@
                 <?php $i ++; 
 
                 ?>
+                <?php
+                $link = $type != 3 ? $item->url : route( 'product.edit', [ 'id' => $item->id ]);
+                ?>
               <tr id="row-{{ $item->id }}">
                 <td><span class="order">{{ $i }}</span></td>
                 @if($arrSearch['is_hot'] == 1 && $arrSearch['loai_id'] > 0 )
                 <td style="vertical-align:middle;text-align:center">
-                  <img src="{{ URL::asset('backend/dist/img/move.png')}}" class="move img-thumbnail" alt="Cập nhật thứ tự"/>
+                  <img src="{{ URL::asset('admin/dist/img/move.png')}}" class="move img-thumbnail" alt="Cập nhật thứ tự"/>
                 </td>
                 @endif
                 <td>
-                  <img class="img-thumbnail lazy" width="80" data-original="{{ $item->image_url ? Helper::showImage($item->image_url) : URL::asset('backend/dist/img/no-image.jpg') }}" alt="Nổi bật" title="Nổi bật" />
+                  <img class="img-thumbnail lazy" width="80" data-original="{{ $item->thumbnail_url ? Helper::showImage($item->thumbnail_url) : URL::asset('admin/dist/img/no-image.jpg') }}" alt="Nổi bật" title="Nổi bật" />
                 </td>
                 <td>                  
-                  <a style="color:#333;font-weight:bold" href="{{ route( 'product.edit', [ 'id' => $item->id ]) }}">{{ $item->name }} {{ $item->name_extend }}</a> &nbsp; @if( $item->is_hot == 1 )
-                  <img class="img-thumbnail" src="{{ URL::asset('backend/dist/img/star.png')}}" alt="Nổi bật" title="Nổi bật" />
+                
+                  <a style="color:#333;font-weight:bold" href="{{ $link }}">{{ $item->name }} </a> &nbsp; @if( $item->is_hot == 1 )
+                  <img class="img-thumbnail" src="{{ URL::asset('admin/dist/img/star.png')}}" alt="Nổi bật" title="Nổi bật" />
                   @endif<br />
                   <strong style="color:#337ab7;font-style:italic"> {{ $item->ten_loai }} / {{ $item->ten_cate }}</strong>
                  <p style="margin-top:10px">
+                 @if($type == 3)
                     @if( $item->is_sale == 1)
                    <b style="color:red">                  
                     {{ number_format($item->price_sale) }}
@@ -136,18 +136,21 @@
                     {{ number_format($item->price) }}
                    </b>
                     @endif 
+                    @else
+                    <b style="color:red">                  
+                    {{ $item->aff_price }}
+                   </b>
+                   <span style="text-decoration: line-through">
+                    {{ ($item->aff_price_old) }}  
+                    </span>
+                    @endif
                   </p>
                   
                 </td>
                 <td style="white-space:nowrap; text-align:right">
-                  @if( in_array($item->cate_id, [31,32,85,35]))
-                  <?php 
-                  $countTuongThich = DB::table('sp_tuongthich')->where('sp_1', $item->id)->count();
-                  ?>
-                  <a href="{{ route( 'product.tuong-thich', [ 'id' => $item->id ]) }}" class="btn btn-info btn-sm"><span class="badge">{{ $countTuongThich }}</span> SP tương thích</a>                 
-                  @endif
+                  @if($type == 2)
                   <a href="{{ route( 'product.edit', [ 'id' => $item->id ]) }}" class="btn btn-warning btn-sm">Chỉnh sửa</a>                 
-
+                  @endif
                   <a onclick="return callDelete('{{ $item->name }}','{{ route( 'product.destroy', [ 'id' => $item->id ]) }}');" class="btn btn-danger btn-sm">Xóa</a>
 
                 </td>
@@ -210,7 +213,7 @@ $(document).ready(function(){
     $('#cate_id').val('');
     $('#searchForm').submit();
   });
-  $('#cate_id').change(function(){
+  $('#cate_id, #type').change(function(){
     $('#searchForm').submit();
   });
   $('#table-list-data tbody').sortable({

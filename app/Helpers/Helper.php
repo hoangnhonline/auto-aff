@@ -23,6 +23,18 @@ class Helper
         
         return str_limit($text, $limit);
     }
+    public static function showPriceAff($price){
+        $price = str_replace("vnđ", "", $price);
+        $price = str_replace("vnd", "", $price);
+        $price = str_replace(" ₫", "", $price);
+        $price = str_replace("₫", "", $price);
+        $price = str_replace(" đ", "", $price);
+        $price = str_replace("đ", "", $price);        
+        $price = str_replace("VND", "", $price);
+        $price = str_replace("VNĐ", "", $price);
+        $price = str_replace(" ", "", $price);
+        return $price;
+    }
     public static function cropWord($text = '', $numWord = 0)
     {
         $wordCount = str_word_count(str_slug($text, ' '));

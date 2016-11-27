@@ -43,6 +43,21 @@
                       </ul>
                   </div>
               @endif
+              <input type="hidden" name="type" value="{{ $detail->type }}">
+              <div class="form-group">
+                  <label>Loại danh mục : </label>               
+                  <span style="color:red;text-transform:uppercase">
+                    <?php 
+                    if($detail->type == 1 ){
+                      echo "Deal hôm nay";
+                    }elseif($detail->type == 2){
+                      echo "Bán chạy";
+                    }else{
+                      echo "Tự kinh doanh";
+                    }
+                    ?>
+                  </span>
+                </div> 
                <div class="form-group">
                   <label>Danh mục cha</label>
                   <select class="form-control" name="loai_id" id="loai_id">                  
@@ -66,36 +81,16 @@
                 <label>Mô tả</label>
                 <textarea class="form-control" rows="4" name="description" id="description">{{ $detail->description }}</textarea>
               </div>  
-              <div class="form-group" style="margin-top:10px">  
-                <label class="col-md-3 row">Banner </label>    
-                <div class="col-md-9">
-                  <img id="thumbnail_icon" src="{{ $detail->icon_url ? Helper::showImage($detail->icon_url) : 'http://placehold.it/60x60' }}" class="img-thumbnail" width="60" height="60">
-                  
-                  <input type="file" id="file-icon" style="display:none" />
-               
-                  <button class="btn btn-default" id="btnUploadIcon" type="button"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Upload</button>
-                </div>
-              </div>           
+                     
               <div class="clearfix"></div>
                 <div class="form-group" style="margin-top:15px;padding-bottom:25px !important;">
-                  <div class="checkbox col-md-4" >
-                    <label>
-                      <input type="checkbox" name="is_hot" value="1" {{ $detail->is_hot == 1 ? "checked" : "" }}>
-                      Danh mục nổi bật
-                    </label>
-                  </div>
-                  <div class="checkbox col-md-4" >
+                  
+                  <div class="checkbox col-md-12" >
                     <label>
                       <input type="checkbox" name="menu_ngang" value="1" {{ $detail->menu_ngang == 1 ? "checked" : "" }}>
-                      Menu ngang 
+                      Hiện Tab
                     </label>
-                  </div>
-                  <div class="checkbox col-md-4" >
-                    <label>
-                      <input type="checkbox" name="menu_doc" value="1" {{ $detail->menu_doc == 1 ? "checked" : "" }}>
-                      Menu dọc
-                    </label>
-                  </div>
+                  </div>                  
                 </div>
                 <div class="clearfix"></div>
               <div class="form-group">
@@ -104,20 +99,7 @@
                   <option value="0" {{ $detail->status == 0 ? "selected" : "" }}>Ẩn</option>
                   <option value="1" {{ $detail->status == 1 ? "selected" : "" }}>Hiện</option>
                 </select>
-              </div>
-              <div class="form-group">
-                <label>Style banner</label>
-                <select class="form-control" name="home_style" id="home_style">                  
-                  <option value="0" {{ $detail->home_style == 0 ? "selected" : "" }}>Không banner</option>
-                  <option value="1" {{ $detail->home_style == 1 ? "selected" : "" }}>Banner đứng lớn</option>
-                  <option value="2" {{ $detail->home_style == 2 ? "selected" : "" }}>Banner đứng nhỏ</option>
-                  <option value="3" {{ $detail->home_style == 3 ? "selected" : "" }}>Banner ngang</option>
-                </select>
-              </div>                       
-              <div class="form-group">
-                <label>Màu nền</label>
-                <input type="text" class="form-control" name="bg_color" id="bg_color" value="{{ $detail->bg_color }}">
-              </div>
+              </div>              
             </div>         
             <!-- /.box-body -->
             <div class="box-footer">

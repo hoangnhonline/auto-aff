@@ -9,6 +9,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Cate;
 use App\Models\LoaiSp;
 use App\Models\MetaData;
+use App\Models\CrawlerUrl;
+
 use Helper, File, Session, Auth;
 
 class CateController extends Controller
@@ -19,18 +21,13 @@ class CateController extends Controller
     * @return Response
     */
     public function index(Request $request)
-    {        
-        if( $request->loai_id ){
-            $loai_id = $request->loai_id;
-            $loaiSp = LoaiSp::find($loai_id);
-        }else{
-            $loaiSp = LoaiSp::orderBy('display_order')->first();
-            $loai_id = $loaiSp->id;    
-        }
-
+    {  
+        $loai_id = $request->loai_id ? $request->loai_id : 1;
+        $loaiSp = LoaiSp::find($loai_id);
+        $type = $request->type ? $request->type : $loaiSp->type;
         $items = Cate::where('loai_id', '=', $loai_id)->orderBy('display_order')->get();
-        $loaiSpArr = LoaiSp::all();  
-        return view('backend.cate.index', compact( 'items', 'loaiSp' , 'loai_id', 'loaiSpArr'));
+        $loaiSpArr = LoaiSp::where('type', $type)->orderBy('display_order')->get();  
+        return view('backend.cate.index', compact( 'items', 'loaiSp' , 'loai_id', 'loaiSpArr', 'type'));
     }
 
     /**
@@ -41,10 +38,11 @@ class CateController extends Controller
     public function create(Request $request)
     {
         $loai_id = isset($request->loai_id) ? $request->loai_id : 0;
-        
-        $loaiSpArr = LoaiSp::all()->sortBy('display_order');
+        $detail = LoaiSp::find($loai_id);
+        $type = $detail->type;
+        $loaiSpArr = LoaiSp::where('type', $type)->orderBy('display_order')->get();
 
-        return view('backend.cate.create', compact( 'loai_id', 'loaiSpArr'));
+        return view('backend.cate.create', compact( 'loai_id', 'loaiSpArr', 'type'));
     }
 
     /**
@@ -55,6 +53,7 @@ class CateController extends Controller
     */
     public function store(Request $request)
     {
+
         $dataArr = $request->all();
         
         $this->validate($request,[
@@ -64,34 +63,15 @@ class CateController extends Controller
         [
             'name.required' => 'Bạn chưa nhập tên danh mục',
             'slug.required' => 'Bạn chưa nhập slug',
-        ]);
-
-        $dataArr['bg_color'] = $dataArr['bg_color'] != '' ? $dataArr['bg_color'] : '#EE484F';
+        ]);        
         
         $dataArr['alias'] = Helper::stripUnicode($dataArr['name']);
         
         $dataArr['created_user'] = Auth::user()->id;
-
-        $dataArr['updated_user'] = Auth::user()->id;
-
-        if($dataArr['icon_url'] && $dataArr['icon_name']){
-            
-            $tmp = explode('/', $dataArr['icon_url']);
-
-            if(!is_dir('uploads/'.date('Y/m/d'))){
-                mkdir('uploads/'.date('Y/m/d'), 0777, true);
-            }
-
-            $destionation = date('Y/m/d'). '/'. end($tmp);
-            
-            File::move(config('icho.upload_path').$dataArr['icon_url'], config('icho.upload_path').$destionation);
-            
-            $dataArr['icon_url'] = $destionation;
-        }
+        $dataArr['updated_user'] = Auth::user()->id;      
         
         $dataArr['is_hot'] = isset($dataArr['is_hot']) ? 1 : 0;    
-        $dataArr['menu_ngang'] = isset($dataArr['menu_ngang']) ? 1 : 0;    
-        $dataArr['menu_doc'] = isset($dataArr['menu_doc']) ? 1 : 0;  
+        $dataArr['menu_ngang'] = isset($dataArr['menu_ngang']) ? 1 : 0;            
 
         $dataArr['display_order'] = 1;
 
@@ -140,11 +120,11 @@ class CateController extends Controller
     public function edit($id)
     {
         $detail = Cate::find($id);
-        $loaiSpArr = LoaiSp::all();
+        $loaiSpArr = LoaiSp::where('type', $detail->type)->orderBy('display_order')->get();
         $meta = (object) [];
         if ( $detail->meta_id > 0){
             $meta = MetaData::find( $detail->meta_id );
-        }        
+        }
         return view('backend.cate.edit', compact( 'detail', 'loaiSpArr', 'meta'));
     }
 
@@ -166,32 +146,16 @@ class CateController extends Controller
         [
             'name.required' => 'Bạn chưa nhập tên danh mục',
             'slug.required' => 'Bạn chưa nhập slug',
-        ]);
-
-        $dataArr['bg_color'] = $dataArr['bg_color'] != '' ? $dataArr['bg_color'] : '#EE484F';
+        ]);       
 
         $dataArr['alias'] = Helper::stripUnicode($dataArr['name']);
 
         $model = Cate::find($dataArr['id']);
 
         $dataArr['updated_user'] = Auth::user()->id;
-        if($dataArr['icon_url'] && $dataArr['icon_name']){
-            
-            $tmp = explode('/', $dataArr['icon_url']);
-
-            if(!is_dir('uploads/'.date('Y/m/d'))){
-                mkdir('uploads/'.date('Y/m/d'), 0777, true);
-            }
-
-            $destionation = date('Y/m/d'). '/'. end($tmp);
-            
-            File::move(config('icho.upload_path').$dataArr['icon_url'], config('icho.upload_path').$destionation);
-            
-            $dataArr['icon_url'] = $destionation;
-        }
+        
         $dataArr['is_hot'] = isset($dataArr['is_hot']) ? 1 : 0;    
-        $dataArr['menu_ngang'] = isset($dataArr['menu_ngang']) ? 1 : 0;    
-        $dataArr['menu_doc'] = isset($dataArr['menu_doc']) ? 1 : 0;
+        $dataArr['menu_ngang'] = isset($dataArr['menu_ngang']) ? 1 : 0;            
 
         $model->update($dataArr);
 

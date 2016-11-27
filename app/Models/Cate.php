@@ -23,7 +23,7 @@ class Cate extends Model  {
      *
      * @var array
      */
-    protected $fillable = ['name', 'slug', 'alias', 'loai_id', 'bg_color', 'is_hot', 'status', 'icon_url', 'display_order', 'description', 'home_style', 'meta_id', 'created_user', 'updated_user', 'menu_ngang', 'menu_doc'];
+    protected $fillable = ['name', 'slug', 'alias', 'status', 'description', 'menu_doc', 'loai_id', 'meta_id', 'is_hot', 'display_order', 'created_user', 'updated_user', 'type'];
 
     public function sanPham()
     {
