@@ -114,7 +114,11 @@
                 </td>
                 @endif
                 <td>
-                  <img class="img-thumbnail lazy" width="80" data-original="{{ $item->thumbnail_url ? Helper::showImage($item->thumbnail_url) : URL::asset('admin/dist/img/no-image.jpg') }}" alt="Nổi bật" title="Nổi bật" />
+                  @if($type == 3)
+                    <img class="img-thumbnail lazy" width="80" data-original="{{ $item->image_url ? Helper::showImage($item->image_url) : URL::asset('admin/dist/img/no-image.jpg') }}" alt="{{ $item->name }}" title="{{ $item->name }}" />
+                  @else
+                  <img class="img-thumbnail lazy" width="80" data-original="{{ $item->thumbnail_url ? Helper::showImage($item->thumbnail_url) : URL::asset('admin/dist/img/no-image.jpg') }}" alt="{{ $item->name }}" title="{{ $item->name }}" />
+                  @endif
                 </td>
                 <td>                  
                 
@@ -136,7 +140,8 @@
                     {{ number_format($item->price) }}
                    </b>
                     @endif 
-                    @else
+                  
+                  @else
                     <b style="color:red">                  
                     {{ $item->aff_price }}
                    </b>
@@ -148,7 +153,7 @@
                   
                 </td>
                 <td style="white-space:nowrap; text-align:right">
-                  @if($type == 2)
+                  @if($type == 3)
                   <a href="{{ route( 'product.edit', [ 'id' => $item->id ]) }}" class="btn btn-warning btn-sm">Chỉnh sửa</a>                 
                   @endif
                   <a onclick="return callDelete('{{ $item->name }}','{{ route( 'product.destroy', [ 'id' => $item->id ]) }}');" class="btn btn-danger btn-sm">Xóa</a>

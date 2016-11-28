@@ -30,8 +30,6 @@ class ProductController extends Controller
     */
     public function index(Request $request)
     {
-
-
         $arrSearch['status'] = $status = isset($request->status) ? $request->status : 1;
         $arrSearch['is_hot'] = $is_hot = isset($request->is_hot) ? $request->is_hot : null;
         $arrSearch['is_sale'] = $is_sale = isset($request->is_sale) ? $request->is_sale : null;
@@ -67,7 +65,7 @@ class ProductController extends Controller
         $query->join('cate', 'cate.id', '=', 'san_pham.cate_id');
         $query->leftJoin('sp_hinh', 'sp_hinh.id', '=','san_pham.thumbnail_id');        
         $query->orderBy('san_pham.id', 'desc');
-        $items = $query->select(['sp_hinh.image_url','san_pham.*','san_pham.id as sp_id', 'full_name' , 'san_pham.created_at as time_created', 'users.full_name', 'loai_sp.name as ten_loai', 'cate.name as ten_cate', 'thumbnail_url', 'aff_price', 'aff_price_old'])
+        $items = $query->select(['sp_hinh.image_url','san_pham.*','san_pham.id as sp_id', 'full_name' , 'san_pham.created_at as time_created', 'users.full_name', 'loai_sp.name as ten_loai', 'cate.name as ten_cate', 'thumbnail_url', 'aff_price', 'aff_price_old', 'sp_hinh.image_url as url_hinh_anh'])
         ->paginate(50);   
         
         
@@ -499,49 +497,20 @@ class ProductController extends Controller
         $thuocTinhArr = $phuKienArr = $soSanhArr = $tuongTuArr = [];
         $hinhArr = (object) [];
         $detail = SanPham::find($id);
+        $type = $detail->type;
+        $hinhArr = SpHinh::where('sp_id', $id)->lists('image_url', 'id');               
 
-        $hinhArr = SpHinh::where('sp_id', $id)->lists('image_url', 'id');
-        //var_dump("<pre>", $hinhArr);die;
-        $tmp = SpThuocTinh::where('sp_id', $id)->select('thuoc_tinh')->first();
-
-        if( $tmp ){
-            $spThuocTinhArr = json_decode( $tmp->thuoc_tinh, true);
-        }
-        $tmpPhuKien = explode(",", $detail->sp_phukien);
-        $phuKienArr = SanPham::whereIn('id', $tmpPhuKien)->lists('name', 'id');
-        //get compare
-        $compare1 = Compare::where('sp_1', $id)->lists('sp_2')->toArray();              
-        $compare2 = Compare::where('sp_2', $id)->lists('sp_1')->toArray();        
-        $tmpSoSanh = array_merge($compare1, $compare2); 
-        $soSanhArr = SanPham::whereIn('id', $tmpSoSanh)->lists('name', 'id');
-
-        $tmpTuongTu = explode(",", $detail->sp_tuongtu);
-        $tuongTuArr = SanPham::whereIn('id', $tmpTuongTu)->lists('name', 'id');
-
-        $loaiSpArr = LoaiSp::all();
+        $loaiSpArr = LoaiSp::where('type', $type)->get();
         
         $loai_id = $detail->loai_id; 
             
-        $cateArr = Cate::where('loai_id', $loai_id)->select('id', 'name')->orderBy('display_order', 'desc')->get();
+        $cateArr = Cate::where('loai_id', $loai_id)->select('id', 'name')->orderBy('display_order', 'desc')->get();        
         
-        $loaiThuocTinhArr = LoaiThuocTinh::where('loai_id', $loai_id)->orderBy('display_order')->get();
         $meta = (object) [];
         if ( $detail->meta_id > 0){
             $meta = MetaData::find( $detail->meta_id );
-        }       
-        if( $loaiThuocTinhArr->count() > 0){
-            foreach ($loaiThuocTinhArr as $value) {
-
-                $thuocTinhArr[$value->id]['id'] = $value->id;
-                $thuocTinhArr[$value->id]['name'] = $value->name;
-
-                $thuocTinhArr[$value->id]['child'] = ThuocTinh::where('loai_thuoc_tinh_id', $value->id)->select('id', 'name')->orderBy('display_order')->get()->toArray();
-            }
-            
-        }        
-        $colorArr = Color::all();
-        $mucDichArr = SpMucDich::where('sp_id', $id)->lists('muc_dich')->toArray();
-        return view('backend.product.edit', compact( 'detail', 'hinhArr', 'thuocTinhArr', 'spThuocTinhArr', 'colorArr', 'loaiSpArr', 'cateArr', 'meta', 'phuKienArr', 'tuongTuArr', 'soSanhArr', 'mucDichArr'));
+        }               
+        return view('backend.product.edit', compact( 'detail', 'hinhArr', 'loaiSpArr', 'cateArr', 'meta'));
     }
     public function ajaxDetail(Request $request)
     {       

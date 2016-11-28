@@ -50,15 +50,7 @@
 	  margin:5em auto;
 	  width:60%;
 	  flex-direction:row;
-	  box-shadow:
-	   1px 1px 0 rgb(22, 160, 133),
-	   2px 2px 0 rgb(22, 160, 133),
-	   3px 3px 0 rgb(22, 160, 133),
-	   4px 4px 0 rgb(22, 160, 133),
-	   5px 5px 0 rgb(22, 160, 133),
-	   6px 6px 0 rgb(22, 160, 133),
-	   7px 7px 0 rgb(22, 160, 133)
-	  ;
+	  
 	}
 
 	.field>input[type=text],
