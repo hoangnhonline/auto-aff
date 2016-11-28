@@ -283,7 +283,7 @@ class ProductController extends Controller
         $this->storeMeta($sp_id, 0, $dataArr);
         Session::flash('message', 'Tạo mới sản phẩm thành công');
 
-        return redirect()->route('product.index', ['loai_id' => $dataArr['loai_id'], 'cate_id' => $dataArr['cate_id']]);
+        return redirect()->route('product.index', ['type' => $dataArr['type'], 'loai_id' => $dataArr['loai_id'], 'cate_id' => $dataArr['cate_id']]);
     }
 
     public function storeMeta( $id, $meta_id, $dataArr ){
