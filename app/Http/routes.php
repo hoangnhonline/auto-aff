@@ -199,6 +199,8 @@ Route::group(['namespace' => 'Backend', 'prefix' => 'backend', 'middleware' => '
         Route::get('{id}/edit',   ['as' => 'tag.edit', 'uses' => 'TagController@edit']);
         Route::post('/update', ['as' => 'tag.update', 'uses' => 'TagController@update']);
         Route::get('{id}/destroy', ['as' => 'tag.destroy', 'uses' => 'TagController@destroy']);
+        Route::post('/ajaxSave', ['as' => 'tag.ajax-save', 'uses' => 'TagController@ajaxSave']);  
+        Route::get('/ajax-list', ['as' => 'tag.ajax-list', 'uses' => 'TagController@ajaxList']);      
     });
     Route::group(['prefix' => 'account'], function () {
         Route::get('/', ['as' => 'account.index', 'uses' => 'AccountController@index']);

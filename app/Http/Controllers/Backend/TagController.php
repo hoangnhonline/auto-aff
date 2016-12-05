@@ -122,7 +122,7 @@ class TagController extends Controller
                 if( !empty( (array) $arr)) {
                     $arrId[] = $arr->id;
                 }else{
-                    $rs = Tag::create(['name'=> $tag, 'type' => 1, 'slug' => str_slug($tag), 'created_user' => Auth::user()->id, 'updated_user' => Auth::user()->id]);
+                    $rs = Tag::create(['name'=> $tag, 'type' => $request->type, 'slug' => str_slug($tag), 'created_user' => Auth::user()->id, 'updated_user' => Auth::user()->id]);
                     $arrId[] = $rs->id;
                 }
 

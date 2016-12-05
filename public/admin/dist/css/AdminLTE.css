@@ -4963,3 +4963,9 @@ img.move{
 .pleft-5{
   padding-left: 5px !important;
 }
+.select2-container--default .select2-selection--multiple .select2-selection__rendered li{
+  color:black !important;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove{
+  color: red !important;
+}

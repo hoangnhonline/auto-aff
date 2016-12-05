@@ -53,7 +53,7 @@ class ArticlesController extends Controller
         
         $cate_id = $request->cate_id;
 
-        $tagArr = Tag::where('type', 2)->orderBy('id', 'desc')->get();
+        $tagArr = Tag::where('type', 3)->orderBy('id', 'desc')->get();
 
         return view('backend.articles.create', compact( 'tagArr', 'cateArr', 'cate_id'));
     }
